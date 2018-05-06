@@ -1,0 +1,50 @@
+[debug] [2018-05-05T01:37:58.983Z] ----------------------------------------------------------------------
+[debug] [2018-05-05T01:37:58.983Z] Command:       C:\Program Files (x86)\nodejs\node.exe C:\Users\Jurguen\AppData\Roaming\npm\node_modules\firebase-tools\bin\firebase serve
+[debug] [2018-05-05T01:37:58.999Z] CLI Version:   3.18.4
+[debug] [2018-05-05T01:37:58.999Z] Platform:      win32
+[debug] [2018-05-05T01:37:58.999Z] Node Version:  v9.6.1
+[debug] [2018-05-05T01:37:58.999Z] Time:          Fri May 04 2018 19:37:58 GMT-0600 (Central America Standard Time)
+[debug] [2018-05-05T01:37:58.999Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2018-05-05T01:37:59.168Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2018-05-05T01:37:59.168Z] > authorizing via signed-in user
+[debug] [2018-05-05T01:37:59.168Z] > refreshing access token with scopes: ["email","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","openid"]
+[debug] [2018-05-05T01:37:59.183Z] >>> HTTP REQUEST POST https://www.googleapis.com/oauth2/v3/token  
+ { refresh_token: '1/pmCLn2vmaaJZhsEvB2ONH_WwZY4K7mkPOHhU3BxHcfM',
+  client_id: '563584335869-fgrhgmd47bqnekij5i8b5pr03ho849e6.apps.googleusercontent.com',
+  client_secret: 'j9iVZfS8kkCEFUPaAeJV0sAi',
+  grant_type: 'refresh_token',
+  scope: 'email https://www.googleapis.com/auth/cloud-platform https://www.googleapis.com/auth/cloudplatformprojects.readonly https://www.googleapis.com/auth/firebase openid' } 
+ Fri May 04 2018 19:37:59 GMT-0600 (Central America Standard Time)
+[debug] [2018-05-05T01:37:59.536Z] <<< HTTP RESPONSE 200
+[debug] [2018-05-05T01:37:59.823Z] >>> HTTP REQUEST GET https://admin.firebase.com/v1/projects/servicioexpress-e4da9  
+  
+ Fri May 04 2018 19:37:59 GMT-0600 (Central America Standard Time)
+[debug] [2018-05-05T01:38:00.454Z] <<< HTTP RESPONSE 200
+[debug] [2018-05-05T01:38:00.454Z] >>> HTTP REQUEST GET https://admin.firebase.com/v1/database/servicioexpress-e4da9/tokens  
+  
+ Fri May 04 2018 19:38:00 GMT-0600 (Central America Standard Time)
+[debug] [2018-05-05T01:38:01.079Z] <<< HTTP RESPONSE 200
+[debug] [2018-05-05T01:38:01.082Z] >>> HTTP REQUEST GET https://cloudresourcemanager.googleapis.com/v1/projects/servicioexpress-e4da9  
+  
+ Fri May 04 2018 19:38:01 GMT-0600 (Central America Standard Time)
+[debug] [2018-05-05T01:38:01.486Z] <<< HTTP RESPONSE 200
+[info] 
+[info] === Serving from 'C:\Users\Jurguen\Desktop\ServicioExpress'...
+[info] 
+[info] i  functions: Preparing to emulate functions.
+[debug] [2018-05-05T01:38:16.264Z] Fetching environment
+[debug] [2018-05-05T01:38:16.279Z] >>> HTTP REQUEST GET https://mobilesdk-pa.googleapis.com/v1/projects/632191827663:getServerAppConfig  
+  
+ Fri May 04 2018 19:38:16 GMT-0600 (Central America Standard Time)
+[debug] [2018-05-05T01:38:16.279Z] >>> HTTP REQUEST GET https://mobilesdk-pa.googleapis.com/v1/projects/632191827663/clients/_:getWebAppConfig  
+  
+ Fri May 04 2018 19:38:16 GMT-0600 (Central America Standard Time)
+[debug] [2018-05-05T01:38:16.894Z] <<< HTTP RESPONSE 200
+[info] i  hosting: Serving hosting files from: dist
+[info] +  hosting: Local server: http://localhost:5000
+
+[debug] [2018-05-05T01:38:17.127Z] <<< HTTP RESPONSE 200
+[debug] [2018-05-05T01:38:17.127Z] Starting @google-cloud/functions-emulator
+[debug] [2018-05-05T01:38:25.806Z] Parsing function triggers
+[info] +  functions: helloWorld: http://localhost:5001/servicioexpress-e4da9/us-central1/helloWorld

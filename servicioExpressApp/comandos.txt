@@ -1,0 +1,7 @@
+Aqui en la linea de comando ng build
+
+para 'ServicioExpressApp' linea de comando y ng build -w
+ para funciones en carpeta de funcion se le da tsc o tsc -w esto para compilar el typescript
+
+para pruebas locales firebase serve
+y para subir app a web firebase deploy 
