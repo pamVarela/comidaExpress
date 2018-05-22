@@ -17,10 +17,17 @@
       "**/node_modules/**"
     ],
     "rewrites": [
-      {
-        "source": "**",
-        "destination": "/index.html"
-      }
+      //restaurantes
+      {"source": "/ModificarRestaurante","function": "modificarRestaurante"},
+      {"source": "/CrearRestaurantes","function": "crearRestaurante"},
+      {"source": "/GetRestaurantes","function": "getRestaurante"},
+      {"source": "/EliminarRestaurante","function": "eliminarRestaurante"},
+      //categorias
+      {"source": "/ListaCategorias","function": "listaCategorias"},
+      {"source": "/categoriasProductos","function": "listaProductosCategoria"},
+      //compradores
+      {"source": "**","destination": "/index.html"}
+      
     ]
   },
   "storage": {

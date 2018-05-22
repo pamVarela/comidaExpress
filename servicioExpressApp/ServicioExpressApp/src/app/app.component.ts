@@ -1,20 +1,29 @@
+
 import { Component } from '@angular/core';
+import { MyService } from "./services/service.service";
+import { Productos, Categoria, Restaurantes,obtRestaurantes } from "./models/models.interface";
+import { Observable } from "rxjs/Observable";
+
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
+
 export class AppComponent {
   title = 'app';
-  categorias=["carnes", "Queques", "Bebidas", "Comida Verde"];
-  restaurantes=["Dingos", "KFC", "Chinitos"];
-  visibleC=false;
+
+  listaProductos:Productos[];
+  categorias:Array<string>;
+  listaRestaurante:Array<string>;
+ 
+  visibleC=false;  
   visibleH=true;
   visibleCE=false;
   visibleR=false;
-  productos=[{nombre:"nombre del producto #1", descripcion:"descripcion #1", restaurante:[{nombre: "nombre restaurante"}]},{nombre:"nombre del producto #1", descripcion:"descripcion #1", restaurante:[{nombre: "nombre restaurante"}]},{nombre:"nombre del producto #1", descripcion:"descripcion #1", restaurante:[{nombre: "nombre restaurante"}]}];
-  
+  //obtenemos el servicio
+  constructor(private service:MyService){ }
 
   Home(){
     this.visibleH=true;
@@ -22,17 +31,46 @@ export class AppComponent {
     this.visibleCE=false;
   }
   MostrarCategorias(){
-    //this.categorias=[]
+    this.categorias=[]
+    this.service.getCategorias()
+    .subscribe(
+      res =>{
+        let resultado = JSON.parse(JSON.stringify(res))
+        this.categorias=resultado.categorias
+      });
+
     this.visibleH=false;
     this.visibleC=true;
   }
 
-  MostrarCategoriaElegida(){
-    //this.productos=[];
+  MostrarCategoriaElegida(indice:number){
+    this.listaProductos=[];
+    console.log(this.categorias[indice]);
+    this.service.getProductos(this.categorias[indice])
+    //esta metiendo lo que el mae manda
+    .subscribe(
+      res =>{
+        this.listaProductos = res.productos
+        console.log(this.listaProductos);
+      }
+    )
+
+    
     this.visibleC=false;
     this.visibleCE=true;
   }
+  
   MostrarRestaurante(){
+    this.listaRestaurante=[];
+    this.service.getRestaurantes()
+    .subscribe(
+      res=>{
+        this.listaRestaurante=res.id;
+        console.log(this.listaRestaurante);
+      }
+    )
+    
+
     this.visibleC=false;
     this.visibleH=false;
     this.visibleCE=false;

@@ -10,11 +10,84 @@ var db = admin.firestore();
 // // Start writing Firebase Functions
 // // https://firebase.google.com/docs/functions/typescript
 
+var compradores = db.collection("Compradores");
 var categorias = db.collection("categorias");
-var restaurantes = db.collection("restaurantes");
+var restaurante = db.collection("restaurantes");
+
+
+//crear un producto
+/*export const crearProducto=functions.https.onRequest((request,response)=>
+{
+    if(request.method == "Post"){
+        categorias.doc(request.query.categoria).get().then(snapshot =>{
+            categorias
+            .add({
+                descripcion: request.body.descripcion,
+                img: request.body.img,
+                nombre: request.body.nombre,
+  //------------------se debe validar que el restaurante exista.----------------------------
+                restaurante: request.body.restaurante
+            })
+        })
+        response.send({status:true,data:"enviado"});
+    }
+});*/
+export const getRestaurante = functions.https.onRequest((request, response) => {
+    if(request.method == "GET"){
+        restaurante.get().then(snapshot =>{
+            var listaRestaurantes = [];
+            snapshot.forEach( restaurante =>{
+                listaRestaurantes.push(restaurante.id);
+            })
+            response.send({id:listaRestaurantes});
+        }).catch(err=>{
+            response.send({error:"Error al cargar datos"});
+        })
+    }
+});  
+//crear restaurante
+export const crearRestaurante = functions.https.onRequest((request, response) => {
+    if(request.method == "POST"){
+        restaurante.add(
+            {
+                descripcion:request.body.descripcion,
+                nombre:request.body.nombre,
+                ubicacion:request.body.ubicacion
+            });
+        response.send({status:true,data:"Insertado"})
+    }
+});
+//modificar datos
+export const modificarRestaurante = functions.https.onRequest((request, response) => {
+    if(request.method == "POST"){
+        restaurante.doc(request.body.id).set(
+            {
+                descripcion: request.body.descripcion,
+                nombre: request.body.nombre,
+                ubicacion: request.body.ubicacion
+            },{merge:true});
+            response.send({status:"Editado exitoso"})
+        }
+    else{
+        response.send({status:"Error en post"})
+    }
+});
+//eliminar resturante.
+export const eliminarRestaurante = functions.https.onRequest((request, response) => {
+    if(request.method == "POST"){
+        restaurante.doc(request.body.id).delete().then(function(){
+            response.send({status:true,data:"eliminado"});
+        })
+    }
+    else{
+        response.send({status:"Error en post"})
+    }
+});
+
 
 //endpoint para crear la lista de productos de cada categoria
 export const listaCategorias = functions.https.onRequest((request, response) => {
+    
     if(request.method == "GET"){
         categorias.get().then(snapshot =>{
             var categ = [];
@@ -33,7 +106,7 @@ export const listaCategorias = functions.https.onRequest((request, response) => 
 export const listaProductosCategoria = functions.https.onRequest((request,response) => {
     if(request.method == "GET"){
         //request.body.name
-        categorias.doc("carnes").get().then(snapshot =>{
+        categorias.doc(request.query.categoria).get().then(snapshot =>{
             var lista = [];
             for (let x = 0 ; snapshot.data().productos[x] != undefined; x++){
 

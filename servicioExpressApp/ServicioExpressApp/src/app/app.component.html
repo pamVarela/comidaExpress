@@ -21,12 +21,11 @@
 </div>
 
 <div *ngIf="visibleC">
-  <div *ngFor="let categoria of categorias">
+  <div *ngFor="let categoria of categorias; let i=index">
       <div class="article-list">
           <div class="row articles">
-              <div style="margin-left:20%; margin-top:20px;"><a (click)="MostrarCategoriaElegida()"><img class="img-fluid" src="assets/imagenes/comidaX.jpg"></a>      
-                  <h6 class="name"><br>{{categoria}}</h6>
-                  
+              <div style="margin-left:20%; margin-top:20px;">      
+                  <button (click)="MostrarCategoriaElegida(i)" class="botonHome">{{categoria}}</button>
               </div>        
           </div>
       </div>    
@@ -36,10 +35,10 @@
 
 <div *ngIf="visibleR">
   <p> <input type="text" class="form-control" id="usr" value="Restaurante"></p>
-  <div *ngFor="let restaurante of restaurantes">
+  <div *ngFor="let restaurante of listaRestaurante; let i=index">
       <div class="article-list">
           <div class="row articles">
-              <div style="margin-left:20%; margin-top:20px;"><a (click)="MostrarCategoriaElegida()"><img class="img-fluid" src="assets/imagenes/comidaX.jpg"></a>      
+              <div style="margin-left:20%; margin-top:20px;"><a (click)="MostrarRestauranteElegido(i)"><img class="img-fluid" src="assets/imagenes/comidaX.jpg"></a>      
                   <h6 class="name"><br>{{restaurante}}</h6>      
               </div>        
           </div>
@@ -48,20 +47,21 @@
 </div>
 
 <div *ngIf="visibleCE">
-  <div *ngFor="let producto of productos">   
-      <div *ngIf="producto.restaurante">
-          <div *ngFor="let rest of producto.restaurante">   
+  <div *ngFor="let producto of listaProductos">   
+  <!--div *ngIf="producto.restaurante"-->
+          <!--div *ngFor="let rest of producto.restaurante"-->   
               <div class="article-list">
                   <div class="row articles">
-                      <div style="margin-left:20%; margin-top:20px;"><a ><img class="img-fluid" src="assets/imagenes/carnes.jpg"></a>
-                          <h6 class="name"><br>{{producto.nombre}}</h6>
-                          <h6 class="description">{{producto.descripcion}}</h6>
-                          <h6 class="description">{{rest.nombre}}</h6>
-                          <a href="#" class="action"><i class="fa fa-plus"></i></a>
+                      <div style="margin-left:20%; margin-top:20px;">
+                        <h6 ><a href="http.google">Restaurante: {{producto.restaurante.nombre}}</a></h6>
+                        <h6 >Nombre: {{producto.nombre}}</h6>
+                        <h6 >Descripcion: {{producto.descripcion}}</h6>
+                        <img src="{{producto.img}}" width="300px" height= "200px">
+                        <a href="#" class="action"><i class="fa fa-plus"></i></a>
                       </div>        
                   </div>
               </div>
-          </div>
-      </div>
+          <!--/div-->
+      <!--/div-->
   </div>
 </div>

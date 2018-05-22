@@ -16,6 +16,12 @@
     border-radius: 10px;
 }
 
+.imagen{
+    width: "200px";
+    height: "50px"
+}
+
+
 .contenedorHome{
 
     align-content: center;
