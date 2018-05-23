@@ -1,0 +1,49 @@
+[debug] [2018-05-23T21:09:07.921Z] ----------------------------------------------------------------------
+[debug] [2018-05-23T21:09:07.921Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\Admin\AppData\Roaming\npm\node_modules\firebase-tools\bin\firebase serve
+[debug] [2018-05-23T21:09:07.921Z] CLI Version:   3.18.5
+[debug] [2018-05-23T21:09:07.921Z] Platform:      win32
+[debug] [2018-05-23T21:09:07.921Z] Node Version:  v9.7.1
+[debug] [2018-05-23T21:09:07.921Z] Time:          Wed May 23 2018 15:09:07 GMT-0600 (Hora estándar, América Central)
+[debug] [2018-05-23T21:09:07.921Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2018-05-23T21:09:07.937Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2018-05-23T21:09:07.937Z] > authorizing via signed-in user
+[debug] [2018-05-23T21:09:07.937Z] >>> HTTP REQUEST GET https://admin.firebase.com/v1/projects/servicioexpress-e4da9  
+  
+ Wed May 23 2018 15:09:07 GMT-0600 (Hora estándar, América Central)
+[debug] [2018-05-23T21:09:10.872Z] <<< HTTP RESPONSE 200
+[debug] [2018-05-23T21:09:10.872Z] >>> HTTP REQUEST GET https://admin.firebase.com/v1/database/servicioexpress-e4da9/tokens  
+  
+ Wed May 23 2018 15:09:10 GMT-0600 (Hora estándar, América Central)
+[debug] [2018-05-23T21:09:13.919Z] <<< HTTP RESPONSE 200
+[debug] [2018-05-23T21:09:13.934Z] >>> HTTP REQUEST GET https://cloudresourcemanager.googleapis.com/v1/projects/servicioexpress-e4da9  
+  
+ Wed May 23 2018 15:09:13 GMT-0600 (Hora estándar, América Central)
+[debug] [2018-05-23T21:09:14.387Z] <<< HTTP RESPONSE 200
+[info] 
+[info] === Serving from 'C:\Users\Admin\Documents\GitHub\servicioExpress\comidaExpress\servicioExpressApp'...
+[info] 
+[info] i  functions: Preparing to emulate functions.
+[debug] [2018-05-23T21:09:15.653Z] Fetching environment
+[debug] [2018-05-23T21:09:15.653Z] >>> HTTP REQUEST GET https://mobilesdk-pa.googleapis.com/v1/projects/632191827663:getServerAppConfig  
+  
+ Wed May 23 2018 15:09:15 GMT-0600 (Hora estándar, América Central)
+[debug] [2018-05-23T21:09:15.653Z] >>> HTTP REQUEST GET https://mobilesdk-pa.googleapis.com/v1/projects/632191827663/clients/_:getWebAppConfig  
+  
+ Wed May 23 2018 15:09:15 GMT-0600 (Hora estándar, América Central)
+[debug] [2018-05-23T21:09:16.215Z] <<< HTTP RESPONSE 200
+[debug] [2018-05-23T21:09:16.215Z] Starting @google-cloud/functions-emulator
+[debug] [2018-05-23T21:09:16.340Z] <<< HTTP RESPONSE 200
+[info] i  hosting: Serving hosting files from: dist
+[info] +  hosting: Local server: http://localhost:5000
+
+[debug] [2018-05-23T21:09:18.970Z] Parsing function triggers
+[info] +  functions: crearRestaurante: http://localhost:5001/servicioexpress-e4da9/us-central1/crearRestaurante
+[info] +  functions: modificarRestaurante: http://localhost:5001/servicioexpress-e4da9/us-central1/modificarRestaurante
+[info] +  functions: eliminarRestaurante: http://localhost:5001/servicioexpress-e4da9/us-central1/eliminarRestaurante
+[info] +  functions: listaCategorias: http://localhost:5001/servicioexpress-e4da9/us-central1/listaCategorias
+[info] +  functions: listaProductosCategoria: http://localhost:5001/servicioexpress-e4da9/us-central1/listaProductosCategoria
+[info] +  functions: getRestaurante: http://localhost:5001/servicioexpress-e4da9/us-central1/getRestaurante
+[info] [hosting] Rewriting /GetRestaurantes to local function getRestaurante
+[info] [hosting] Rewriting /ListaCategorias to local function listaCategorias
+[info] [hosting] Rewriting /categoriasProductos?categoria=carnes to local function listaProductosCategoria
