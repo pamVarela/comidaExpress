@@ -1,0 +1,52 @@
+[debug] [2018-05-24T21:21:21.392Z] ----------------------------------------------------------------------
+[debug] [2018-05-24T21:21:21.394Z] Command:       C:\Program Files (x86)\nodejs\node.exe C:\Users\Jurguen\AppData\Roaming\npm\node_modules\firebase-tools\bin\firebase serve
+[debug] [2018-05-24T21:21:21.395Z] CLI Version:   3.18.5
+[debug] [2018-05-24T21:21:21.395Z] Platform:      win32
+[debug] [2018-05-24T21:21:21.395Z] Node Version:  v9.6.1
+[debug] [2018-05-24T21:21:21.398Z] Time:          Thu May 24 2018 15:21:21 GMT-0600 (Central America Standard Time)
+[debug] [2018-05-24T21:21:21.398Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2018-05-24T21:21:21.412Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2018-05-24T21:21:21.412Z] > authorizing via signed-in user
+[debug] [2018-05-24T21:21:21.414Z] >>> HTTP REQUEST GET https://admin.firebase.com/v1/projects/servicioexpress-e4da9  
+  
+ Thu May 24 2018 15:21:21 GMT-0600 (Central America Standard Time)
+[debug] [2018-05-24T21:21:24.626Z] <<< HTTP RESPONSE 200
+[debug] [2018-05-24T21:21:24.628Z] >>> HTTP REQUEST GET https://admin.firebase.com/v1/database/servicioexpress-e4da9/tokens  
+  
+ Thu May 24 2018 15:21:24 GMT-0600 (Central America Standard Time)
+[debug] [2018-05-24T21:21:25.126Z] <<< HTTP RESPONSE 200
+[debug] [2018-05-24T21:21:25.128Z] >>> HTTP REQUEST GET https://cloudresourcemanager.googleapis.com/v1/projects/servicioexpress-e4da9  
+  
+ Thu May 24 2018 15:21:25 GMT-0600 (Central America Standard Time)
+[debug] [2018-05-24T21:21:25.865Z] <<< HTTP RESPONSE 200
+[info] 
+[info] === Serving from 'C:\Users\Jurguen\Desktop\Proyectos git\comidaExpress\servicioExpressApp'...
+[info] 
+[info] i  functions: Preparing to emulate functions.
+[debug] [2018-05-24T21:21:27.289Z] Fetching environment
+[debug] [2018-05-24T21:21:27.299Z] >>> HTTP REQUEST GET https://mobilesdk-pa.googleapis.com/v1/projects/632191827663:getServerAppConfig  
+  
+ Thu May 24 2018 15:21:27 GMT-0600 (Central America Standard Time)
+[debug] [2018-05-24T21:21:27.300Z] >>> HTTP REQUEST GET https://mobilesdk-pa.googleapis.com/v1/projects/632191827663/clients/_:getWebAppConfig  
+  
+ Thu May 24 2018 15:21:27 GMT-0600 (Central America Standard Time)
+[debug] [2018-05-24T21:21:28.156Z] <<< HTTP RESPONSE 200
+[debug] [2018-05-24T21:21:28.205Z] <<< HTTP RESPONSE 200
+[debug] [2018-05-24T21:21:28.205Z] Starting @google-cloud/functions-emulator
+[info] i  hosting: Serving hosting files from: dist
+[info] +  hosting: Local server: http://localhost:5000
+
+[debug] [2018-05-24T21:21:30.898Z] Parsing function triggers
+[info] +  functions: eliminarCategoria: http://localhost:5001/servicioexpress-e4da9/us-central1/eliminarCategoria
+[info] +  functions: crearUsuario: http://localhost:5001/servicioexpress-e4da9/us-central1/crearUsuario
+[info] +  functions: modificarRestaurante: http://localhost:5001/servicioexpress-e4da9/us-central1/modificarRestaurante
+[info] +  functions: listaCategorias: http://localhost:5001/servicioexpress-e4da9/us-central1/listaCategorias
+[info] +  functions: crearCategoria: http://localhost:5001/servicioexpress-e4da9/us-central1/crearCategoria
+[info] +  functions: crearRestaurante: http://localhost:5001/servicioexpress-e4da9/us-central1/crearRestaurante
+[info] +  functions: eliminarRestaurante: http://localhost:5001/servicioexpress-e4da9/us-central1/eliminarRestaurante
+[info] +  functions: getListaProductosCategoria: http://localhost:5001/servicioexpress-e4da9/us-central1/getListaProductosCategoria
+[info] +  functions: getRestaurante: http://localhost:5001/servicioexpress-e4da9/us-central1/getRestaurante
+[info] [hosting] Rewriting /eliminarCategoria to local function eliminarCategoria
+[info] [hosting] Rewriting /eliminarCategoria to local function eliminarCategoria
+[info] [hosting] Rewriting /eliminarCategoria to local function eliminarCategoria

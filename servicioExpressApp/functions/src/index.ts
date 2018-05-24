@@ -32,6 +32,21 @@ var restaurante = db.collection("restaurantes");
         response.send({status:true,data:"enviado"});
     }
 });*/
+
+//crea usuario
+export const crearUsuario = functions.https.onRequest((request, response) => {
+    if(request.method == "POST"){
+        restaurante.add(
+            {
+                nombre:request.body.nombre,
+                descripcion:request.body.descripcion,
+                ubicacion:request.body.ubicacion
+            });
+        response.send({status:true,data:"Insertado"})
+    }
+});
+
+//obtiene los restaurantes
 export const getRestaurante = functions.https.onRequest((request, response) => {
     if(request.method == "GET"){
         restaurante.get().then(snapshot =>{
@@ -84,7 +99,77 @@ export const eliminarRestaurante = functions.https.onRequest((request, response)
     }
 });
 
+//crear categoria
+export const crearCategoria = functions.https.onRequest((request, response) => {
+    if(request.method == "POST"){
+        if(request.body.id==undefined){
+           response.send({error: "El body se encuentra vacio"});
+        } 
+        var list=[]
+        categorias.doc(request.body.id).set({
+            productos: list
+        });
+        response.send({Status: "insertada"});
+    }
+});
+//eliminar categoria
+export const eliminarCategoria = functions.https.onRequest((request, response) => {
+    if(request.method == "POST"){
+        if(request.body.id==undefined){
+            response.send({error: "el body se encuentra vacio"});
+        } 
+        categorias.doc(request.body.id).delete().then(function(){
+            response.send({status:true,data:"eliminado"});
+        })
+    }
+    else{
+        response.send({status:"Error en post"})
+    }
+});
 
+
+/*
+export const subirImagenPlat = functions.https.onRequest((request, response) => {
+    if (request.method === 'POST') {
+        let keyPlat=request.body.keyPlat //clave de platillo
+        var img = request.body.img //base64
+        if(keyPlat==undefined || img==undefined || !Buffer.from(img, 'base64').toString('base64')===img){
+            response.send({status:false,data:"Platillo o imagen no valido"})
+            return;
+        }
+        platillos.doc(keyPlat).get().then(snapshot =>{
+            if(!snapshot.exists){
+                response.send({status:false,data:"El platillo solicitado no existe"})
+                return
+            }
+            var mimeType = 'image/jpeg',
+            fileName = keyPlat+'.jpg',
+            imageBuffer = new Buffer(img, 'base64');
+            var file = bucket.file('platillos/' + fileName);
+            file.save(imageBuffer,{
+                metadata: {contentType: mimeType}}, 
+                error => {
+                if (error) {
+                    response.send({status:false,data:'No se pudo subir la imagen.'});
+                }
+                file.acl.add({
+                    entity: 'allUsers',
+                    role: gcs.acl.READER_ROLE //gcs ->'@google-cloud/storage'
+                    },
+                    function(err, aclObject) {
+                        if (!err){
+                            let URL = "https://storage.googleapis.com/designexpresstec.appspot.com/" + file.id;
+                            platillos.doc(keyPlat).set({imagen:URL},{merge:true})
+                            response.send({status:true,data:URL});
+                        }
+                        else
+                            response.send({status:false,data:"No se pudieron establecer los servicios: " + err});
+                    });
+            });
+        }).catch(err =>{response.send({status:false,data:"Error obteniendo el platillo"})})
+    } else  response.send({status:false,data:"Solo se admite POST"});
+})
+*/
 //endpoint para crear la lista de productos de cada categoria
 export const listaCategorias = functions.https.onRequest((request, response) => {
     
@@ -103,14 +188,17 @@ export const listaCategorias = functions.https.onRequest((request, response) => 
 });
 
 //endpoint para la consulta de los productos de una categoria
-export const listaProductosCategoria = functions.https.onRequest((request,response) => {
+export const getListaProductosCategoria = functions.https.onRequest((request,response) => {
     if(request.method == "GET"){
         //request.body.name
+        if(request.query.categoria==undefined){
+            response.send({error: "Error al traer datos"});
+        }
         categorias.doc(request.query.categoria).get().then(snapshot =>{
             var lista = [];
             for (let x = 0 ; snapshot.data().productos[x] != undefined; x++){
 
-                snapshot.data().productos[x].restaurante.get().then(restaurante =>{
+                restaurante.doc(snapshot.data().productos[x].restaurante).get().then(restaurante =>{
                     var rest;
                     rest = {id: restaurante.id, nombre: restaurante.data().nombre}
                 
@@ -123,15 +211,15 @@ export const listaProductosCategoria = functions.https.onRequest((request,respon
                     if(snapshot.data().productos[x+1] == undefined){
                         response.send({productos: lista});
                     }
-                  
-               }).catch((err) => {
+                    
+                }).catch((err) => {
                 response.send({error: "Error datos del restaurante"});
-               });
-              
-            }
-            
+                });
+                
+            }    
         }).catch (err => {
             response.send({error: "Error en los datos de productos de la categoria..."});
         });
     }
+
 });

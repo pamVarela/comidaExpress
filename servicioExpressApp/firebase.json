@@ -24,7 +24,9 @@
       {"source": "/EliminarRestaurante","function": "eliminarRestaurante"},
       //categorias
       {"source": "/ListaCategorias","function": "listaCategorias"},
-      {"source": "/categoriasProductos","function": "listaProductosCategoria"},
+      {"source": "/crearCategoria","function": "crearCategoria"},
+      {"source": "/eliminarCategoria","function": "eliminarCategoria"},
+      {"source": "/getListaProductosCategoria","function": "getListaProductosCategoria"},
       //compradores
       {"source": "**","destination": "/index.html"}
       

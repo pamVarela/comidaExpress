@@ -11,7 +11,7 @@ export class MyService{
     
     public getProductos( categoria: string){
         let data={"categoria":categoria};
-        return this.service.get<Categoria>(this.url+"categoriasProductos",{params:data})
+        return this.service.get<Categoria>(this.url+"getListaCategoriasProductos",{params:data})
     }
     
     public getCategorias(){
