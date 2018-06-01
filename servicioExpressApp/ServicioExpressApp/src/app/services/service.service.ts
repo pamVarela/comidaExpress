@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Productos, Categoria, obtRestaurantes } from "../models/models.interface";
+import { Productos, Categoria, obtRestaurantes,Restaurantes } from "../models/models.interface";
 
 @Injectable()
 export class MyService{
@@ -11,7 +11,7 @@ export class MyService{
     
     public getProductos( categoria: string){
         let data={"categoria":categoria};
-        return this.service.get<Categoria>(this.url+"categoriasProductos",{params:data})
+        return this.service.get<Categoria>(this.url+"getListaProductosCategoria",{params:data})
     }
     
     public getCategorias(){

@@ -6,21 +6,22 @@ export interface Categoria {
     productos:Productos[]
 }
 export interface Productos{
-    nombre: String,
-    descripcion: String,
-    img:String,
+    nombre: string,
+    descripcion: string,
+    img:string,
     restaurante:
     {
-        id: String,
-        nombre: String
+        id: string,
+        nombre: string
     }
 }
 export interface obtRestaurantes{
-    id:Array<string>
+    restaurantes: Restaurantes[]
 }
 
 export interface Restaurantes{
-    descripcion: string
-    nombre: string
+    descripcion: string,
+    nombre: string,
+    imagen: string,
     ubicacion: string
 }

@@ -20,13 +20,19 @@
       //restaurantes
       {"source": "/ModificarRestaurante","function": "modificarRestaurante"},
       {"source": "/CrearRestaurantes","function": "crearRestaurante"},
-      {"source": "/GetRestaurantes","function": "getRestaurante"},
+      {"source": "/GetRestaurantes","function": "getRestaurantes"},
       {"source": "/EliminarRestaurante","function": "eliminarRestaurante"},
+      //productos
+      {"source": "/crearProducto","function": "crearProducto"},
+      {"source": "/eliminarProducto","function": "eliminarProducto"},
+      {"source": "/modificarProducto","function": "modificarProducto"},
       //categorias
       {"source": "/ListaCategorias","function": "listaCategorias"},
-      {"source": "/categoriasProductos","function": "listaProductosCategoria"},
+      {"source": "/crearCategoria","function": "crearCategoria"},
+      {"source": "/getListaProductosCategoria","function": "getListaProductosCategoria"},
       //compradores
       {"source": "**","destination": "/index.html"}
+
       
     ]
   },

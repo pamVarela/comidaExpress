@@ -1,7 +1,7 @@
 
 import { Component } from '@angular/core';
 import { MyService } from "./services/service.service";
-import { Productos, Categoria, Restaurantes,obtRestaurantes } from "./models/models.interface";
+import { Productos, Categoria,Restaurantes, obtRestaurantes } from "./models/models.interface";
 import { Observable } from "rxjs/Observable";
 
 
@@ -16,7 +16,7 @@ export class AppComponent {
 
   listaProductos:Productos[];
   categorias:Array<string>;
-  listaRestaurante:Array<string>;
+  listaRestaurante:Restaurantes[];
  
   visibleC=false;  
   visibleH=true;
@@ -36,7 +36,7 @@ export class AppComponent {
     .subscribe(
       res =>{
         let resultado = JSON.parse(JSON.stringify(res))
-        this.categorias=resultado.categorias
+        this.categorias= resultado.categorias;
       });
 
     this.visibleH=false;
@@ -62,14 +62,15 @@ export class AppComponent {
   
   MostrarRestaurante(){
     this.listaRestaurante=[];
+
     this.service.getRestaurantes()
     .subscribe(
-      res=>{
-        this.listaRestaurante=res.id;
+      res=>{ 
+        this.listaRestaurante = res.restaurantes
         console.log(this.listaRestaurante);
       }
     )
-    
+
 
     this.visibleC=false;
     this.visibleH=false;
