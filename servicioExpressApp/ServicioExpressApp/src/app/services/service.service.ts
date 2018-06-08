@@ -6,6 +6,8 @@ import { Productos, Categoria, obtRestaurantes,Restaurantes } from "../models/mo
 export class MyService{
     /*injectando el servicios client a nuuestro servicios
     para usar nuestras funciones mas directamente*/ 
+    
+    //url:string="https://servicioexpress-e4da9.firebaseapp.com/"
     url:string="http://localhost:5000/"
     constructor(private service:HttpClient){ }
     

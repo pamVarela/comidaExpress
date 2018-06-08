@@ -111,7 +111,7 @@ exports.subirImagenProducto = functions.https.onRequest((req, res) => {
     else
         res.send({ status: false, data: "Solo se admite la peticion de POST" });
 });
-//endpoint para crear la lista de productos de cada categoria
+//crear la lista de productos de cada categoria
 exports.listaCategorias = functions.https.onRequest((request, response) => {
     if (request.method == "GET") {
         productos.get().then(snapshot => {
@@ -126,43 +126,49 @@ exports.listaCategorias = functions.https.onRequest((request, response) => {
         });
     }
 });
-//endpoint para la consulta de los productos de una categoria
+//consulta de los productos de una categoria
 exports.getListaProductosCategoria = functions.https.onRequest((request, response) => {
     if (request.method == "GET") {
         //request.body.name
         if (request.query.categoria == undefined) {
-            response.send({ error: "Error al traer datos" });
+            response.send({ error: "Debe ingresar el campo de texto" });
         }
         productos.where("categoria", "==", request.query.categoria).get().then(snapshot => {
-            var lista = [];
-            for (let x = 0; snapshot.docs[x].data() != undefined; x++) {
-                let producto = snapshot.docs[x].data();
-                restaurante.doc(snapshot.docs[x].data().restaurante).get().then(restaurante => {
-                    var rest;
-                    rest = { id: restaurante.id, nombre: restaurante.data().nombre };
-                    lista.push({
-                        nombre: producto.nombre,
-                        descripcion: producto.descripcion,
-                        img: producto.imagen,
-                        restaurante: rest
-                    });
-                    if (snapshot.docs[x + 1] == undefined) {
-                        response.send({ productos: lista });
-                    }
-                }).catch((err) => {
-                    response.send({ error: "Error datos del restaurante" });
-                });
+            if (snapshot.empty) {
+                response.send({ error: "No hay categorias de lo elegido" });
             }
-        }).catch(err => {
+            else {
+                var lista = [];
+                for (let x = 0; snapshot.docs[x] != undefined; x++) {
+                    let producto = snapshot.docs[x].data();
+                    restaurante.doc(snapshot.docs[x].data().restaurante).get().then(restaurante => {
+                        var rest;
+                        rest = { id: restaurante.id, nombre: restaurante.data().nombre };
+                        lista.push({
+                            nombre: producto.nombre,
+                            descripcion: producto.descripcion,
+                            imagen: producto.imagen,
+                            precio: producto.precio,
+                            restaurante: rest
+                        });
+                        if (snapshot.docs[x + 1] == undefined) {
+                            response.send({ productos: lista });
+                        }
+                    }).catch((err) => {
+                        response.send({ error: "Error datos del restaurante" });
+                    });
+                }
+            }
+        }).catch((err) => {
             console.log(err);
-            response.send({ error: "Error en los datos de productos de la categoria..." + JSON.stringify(err) });
+            response.send({ error: "Error en los datos de los productos de la categoria..." });
         });
     }
 });
 //crear un producto
 exports.crearProducto = functions.https.onRequest((request, response) => {
     if (request.method == "POST") {
-        let nombre = request.body.nombre, categoria = request.body.categoria, descripcion = request.body.descripcion, rest = request.body.restaurante, img = request.body.imagen;
+        let nombre = request.body.nombre, categoria = request.body.categoria, descripcion = request.body.descripcion, rest = request.body.restaurante, precio = parseInt(request.body.precio), img = request.body.imagen;
         //se debe validar que el restaurante exista.  
         if (rest == undefined || nombre == undefined || descripcion == undefined) {
             response.send({ msjError: "Hay un dato que se encuentra indefinido..." });
@@ -173,7 +179,8 @@ exports.crearProducto = functions.https.onRequest((request, response) => {
                 nombre: nombre,
                 descripcion: descripcion,
                 imagen: img,
-                restaurante: rest
+                restaurante: rest,
+                precio: precio
             }).then(res => {
                 response.send({ mensaje: "Se ha creado la insercion de producto...", producto: res.id });
             }).catch(err => {
@@ -212,15 +219,66 @@ exports.eliminarProducto = functions.https.onRequest((request, response) => {
         response.send({ status: true, data: "La peticion debe ser un POST" });
     }
 });
-//crea usuario
-exports.crearUsuario = functions.https.onRequest((request, response) => {
+//crear el comprador
+exports.crearComprador = functions.https.onRequest((request, response) => {
     if (request.method == "POST") {
-        restaurante.add({
+        let tarjeta = { codigo: parseInt(request.body.codigo),
+            dueño: request.body.dueno,
+            vencimiento: parseInt(request.body.vencimiento),
+            numero: request.body.numero,
+            proveedor: request.body.proveedor };
+        var carrito = [];
+        compradores.add({
+            carrito: carrito,
             nombre: request.body.nombre,
-            descripcion: request.body.descripcion,
-            ubicacion: request.body.ubicacion
+            ubicacion: genGeopoint(JSON.parse(request.body.ubicacion), true),
+            telefono: request.body.telefono,
+            tarjeta: tarjeta
         });
-        response.send({ status: true, data: "Insertado" });
+        response.send({ status: true, data: "Se creó el comprador." });
+    }
+    else {
+        response.send({ status: true, data: "La petición debe ser un POST" });
+    }
+});
+//modificar el comprador
+exports.modificarComprador = functions.https.onRequest((request, response) => {
+    if (request.method == "POST") {
+        let tarjeta = { codigo: parseInt(request.body.codigo),
+            dueño: request.body.dueno,
+            vencimiento: parseInt(request.body.vencimiento),
+            numero: request.body.numero,
+            proveedor: request.body.proveedor };
+        compradores.doc(request.body.correo).set({
+            nombre: request.body.nombre,
+            ubicacion: genGeopoint(JSON.parse(request.body.ubicacion), true),
+            telefono: request.body.telefono,
+            tarjeta: tarjeta
+        }, { merge: true });
+        response.send({ mensaje: "Modificacion exitosa del comprador!" });
+    }
+    else {
+        response.send({ status: "La petición tiene que ser un POST" });
+    }
+});
+//obtiene la informacion del comprador
+exports.getInformacionComprador = functions.https.onRequest((request, response) => {
+    if (request.method == "GET") {
+        compradores.doc(request.query.correo).get().then(comp => {
+            var comprador = [];
+            comprador.push({
+                nombre: comp.data().nombre,
+                telefono: comp.data().telefono,
+                ubicacion: comp.data().ubicacion,
+                tarjeta: comp.data().tarjeta
+            });
+            response.send({ comprador: comprador });
+        }).catch(err => {
+            response.send({ msj: "Error al extraer los datos" });
+        });
+    }
+    else {
+        response.send({ msj: "La petición tiene que ser un GET" });
     }
 });
 //obtiene los restaurantes
@@ -240,15 +298,18 @@ exports.getRestaurantes = functions.https.onRequest((request, response) => {
 //crear restaurante
 exports.crearRestaurante = functions.https.onRequest((request, response) => {
     if (request.method == "POST") {
-        let nombre = request.body.nombre, descripcion = request.body.descripcion, ubicacion = genGeopoint(JSON.parse(request.body.ubicacion), true);
-        if (nombre == undefined || descripcion == undefined || ubicacion == undefined) {
+        let nombre = request.body.nombre, correo = request.body.correo, descripcion = request.body.descripcion, inicio = request.body.inicio, final = request.body.final, ubicacion = genGeopoint(JSON.parse(request.body.ubicacion), true);
+        if (nombre == undefined || correo == undefined || descripcion == undefined
+            || ubicacion == undefined || inicio == undefined || final == undefined) {
             response.send({ error: "Hay algún dato indefinido..." });
         }
         else {
             restaurante.add({
+                correo: correo,
                 descripcion: descripcion,
                 nombre: nombre,
                 ubicacion: ubicacion,
+                horario: { inicio: inicio, final: final }
             }).then(ref => {
                 response.send({ status: true, data: ref.id });
             }).catch(err => {
@@ -264,9 +325,11 @@ exports.crearRestaurante = functions.https.onRequest((request, response) => {
 exports.modificarRestaurante = functions.https.onRequest((request, response) => {
     if (request.method == "POST") {
         restaurante.doc(request.body.id).set({
-            descripcion: request.body.descripcion,
             nombre: request.body.nombre,
-            ubicacion: request.body.ubicacion
+            descripcion: request.body.descripcion,
+            ubicacion: request.body.ubicacion,
+            inicio: request.body.inicio,
+            final: request.body.final,
         }, { merge: true });
         response.send({ mensaje: "Modificacion exitosa!" });
     }
@@ -336,6 +399,162 @@ exports.agregarProductoCarrito = functions.https.onRequest((request, response) =
     }
     else {
         response.send({ msj: "La peticion tiene que ser un POST" });
+    }
+});
+//funcion para cuando se hace el pedido
+exports.hacerPedido = functions.https.onRequest((request, response) => {
+    if (request.method == "POST") {
+        let correo = request.body.correo;
+        console.log(correo);
+        if (correo == undefined) {
+            response.send({ msj: "Debe ingresar en el campo de texto del correo" });
+        }
+        else {
+            compradores.doc(correo).get().then(comp => {
+                if (comp.exists) {
+                    let carrito = comp.data().carrito;
+                    let guardar = (correo, carrito) => {
+                        compradores.doc(correo).set({ carrito: carrito }, { merge: true });
+                    };
+                    let keys = Object.keys(carrito);
+                    if (keys.length == 0) {
+                        response.send({ status: false, msj: "No hay pedidos" });
+                    }
+                    else {
+                        for (let c = 0; c < keys.length; c++) {
+                            productos.doc(keys[c]).get().then(producto => {
+                                if (producto.exists) {
+                                    let est = { proceso: "pendiente" };
+                                    pedidos.add({
+                                        correo: correo,
+                                        restaurante: producto.data().restaurante,
+                                        categoria: producto.data().categoria,
+                                        nombre: producto.data().nombre,
+                                        precio: producto.data().precio,
+                                        descripcion: producto.data().descripcion,
+                                        ubicacion: carrito[keys[c]].ubicacion,
+                                        fecha: carrito[keys[c]].fecha,
+                                        cantidad: carrito[keys[c]].cantidad,
+                                        estado: est
+                                    }).then(ref => {
+                                        console.log({
+                                            correo: correo,
+                                            restaurante: producto.data().restaurante,
+                                            categoria: producto.data().categoria,
+                                            nombre: producto.data().nombre,
+                                            precio: producto.data().precio,
+                                            descripcion: producto.data().descripcion,
+                                            ubicacion: carrito[keys[c]].ubicacion,
+                                            fecha: carrito[keys[c]].fecha,
+                                            cantidad: carrito[keys[c]].cantidad,
+                                            estado: est
+                                        });
+                                        delete carrito[keys[c]];
+                                        if (Object.keys(carrito).length == 0) {
+                                            guardar(correo, carrito);
+                                            response.send({ status: true, msj: `Se insertaron ${c} pedidos` });
+                                        }
+                                    }).catch(err => {
+                                        guardar(correo, carrito);
+                                        response.send({ status: false, msj: "Error...al procesar los pedidos" });
+                                    });
+                                }
+                                else {
+                                    guardar(correo, carrito);
+                                    response.send({ error: "No existe el producto..." });
+                                }
+                            }).catch(err => {
+                                guardar(correo, carrito);
+                                console.log(err);
+                                response.send({ error: "Error en los datos del producto" });
+                            });
+                        }
+                    }
+                }
+                else {
+                    response.send({ msj: "No existe el comprador..." });
+                }
+            }).catch(err => {
+                console.log(err);
+                response.send({ error: "Error en los datos del producto..." });
+            });
+        }
+    }
+    else {
+        response.send({ msj: "La petición tiene que ser un POST" });
+    }
+});
+//funcion para eliminar un producto del carrito
+exports.eliminarProductoCarrito = functions.https.onRequest((request, response) => {
+    if (request.method == "POST") {
+        let correo = request.body.correo;
+        let producto = request.body.producto;
+        if (correo == undefined || producto == undefined) {
+            response.send({ msj: "Hay un o más datos indefinidos" });
+        }
+        else {
+            compradores.doc(correo).get().then(comprador => {
+                if (comprador.exists) {
+                    let carrito = comprador.data().carrito;
+                    if (carrito[producto] == undefined) {
+                        response.send({ msj: "El producto en el carrito esta indefinido" });
+                    }
+                    else {
+                        delete (carrito[producto]);
+                        response.send({ msj: `El producto ${producto} en el carrito se eliminó` });
+                        compradores.doc(correo).update({
+                            carrito: carrito
+                        });
+                    }
+                }
+                else {
+                    response.send({ msj: "El correo no existe" });
+                }
+            });
+        }
+    }
+    else {
+        response.send({ msjError: "La peticion tiene que ser un POST" });
+    }
+});
+//funcion para obtener los pedidos de mi restaurante
+exports.getPedidosRestaurante = functions.https.onRequest((request, response) => {
+    if (request.method == "GET") {
+        let claveRest = request.query.claveRest;
+        if (claveRest == undefined) {
+            response.send({ msj: "El dato de correo esta indefinido" });
+        }
+        else {
+            var listaPedidos = [];
+            pedidos.where("restaurante", "==", claveRest).get().then(pedido => {
+                if (pedido.empty) {
+                    response.send({ msj: "No existe el pedido" });
+                }
+                else {
+                    var listaPedidos = [];
+                    for (let x = 0; pedido.docs[x] != undefined; x++) {
+                        let ped = pedido.docs[x].data();
+                        listaPedidos.push({
+                            correo: ped.correo,
+                            nombre: ped.nombre,
+                            categoria: ped.categoria,
+                            ubicacion: ped.ubicacion,
+                            cantidad: ped.cantidad,
+                            precio: ped.precio,
+                            fecha: ped.fecha
+                        });
+                        if (pedido.docs[x + 1] == undefined) {
+                            response.send({ pedidos: listaPedidos });
+                        }
+                    }
+                }
+            }).catch(err => {
+                response.send({ mensajeError: "La clave del restaurante no existe" });
+            });
+        }
+    }
+    else {
+        response.send({ msj: "La peticion tiene ser GET" });
     }
 });
 //# sourceMappingURL=index.js.map

@@ -8,7 +8,8 @@ export interface Categoria {
 export interface Productos{
     nombre: string,
     descripcion: string,
-    img:string,
+    imagen:string,
+    precio: number;
     restaurante:
     {
         id: string,

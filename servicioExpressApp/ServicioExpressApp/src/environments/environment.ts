@@ -5,12 +5,11 @@
 
 export const environment = {
   production: false,
-  firebase : {
-    apiKey: "AIzaSyDUevvD6dpiMbvh-sXaCgX66Bs9WMn3ZXQ",
-    authDomain: "comidasexpress17.firebaseapp.com",
-    databaseURL: "https://comidasexpress17.firebaseio.com",
-    projectId: "comidasexpress17",
-    storageBucket: "comidasexpress17.appspot.com",
-    messagingSenderId: "283451118691"
-  }
+  apiKey: "AIzaSyD0BCFIaeyZb6voEQYn6hW2DfAz_MnVORk",
+  authDomain: "servicioexpress-e4da9.firebaseapp.com",
+  databaseURL: "https://servicioexpress-e4da9.firebaseio.com",
+  projectId: "servicioexpress-e4da9",
+  storageBucket: "servicioexpress-e4da9.appspot.com",
+  messagingSenderId: "632191827663"
+  
 };
