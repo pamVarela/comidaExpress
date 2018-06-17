@@ -1,5 +1,6 @@
 {
   "projects": {
-    "default": "servicioexpress-e4da9"
+    "default": "servicioexpress-e4da9",
+    "servicioExpress": "servicioexpress-e4da9"
   }
 }

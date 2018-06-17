@@ -111,7 +111,7 @@ exports.subirImagenProducto = functions.https.onRequest((req, res) => {
     else
         res.send({ status: false, data: "Solo se admite la peticion de POST" });
 });
-//crear la lista de productos de cada categoria
+//endpoint para crear la lista de productos de cada categoria
 exports.listaCategorias = functions.https.onRequest((request, response) => {
     if (request.method == "GET") {
         productos.get().then(snapshot => {
@@ -126,49 +126,48 @@ exports.listaCategorias = functions.https.onRequest((request, response) => {
         });
     }
 });
-//consulta de los productos de una categoria
+//endpoint para la consulta de los productos de una categoria 
 exports.getListaProductosCategoria = functions.https.onRequest((request, response) => {
     if (request.method == "GET") {
         //request.body.name
         if (request.query.categoria == undefined) {
-            response.send({ error: "Debe ingresar el campo de texto" });
+            response.send({ error: "Error al traer datos del Query" });
         }
         productos.where("categoria", "==", request.query.categoria).get().then(snapshot => {
-            if (snapshot.empty) {
-                response.send({ error: "No hay categorias de lo elegido" });
-            }
-            else {
-                var lista = [];
-                for (let x = 0; snapshot.docs[x] != undefined; x++) {
-                    let producto = snapshot.docs[x].data();
-                    restaurante.doc(snapshot.docs[x].data().restaurante).get().then(restaurante => {
-                        var rest;
-                        rest = { id: restaurante.id, nombre: restaurante.data().nombre };
+            var lista = [];
+            for (let x = 0; snapshot.docs[x] != undefined; x++) {
+                let producto = snapshot.docs[x];
+                restaurante.where("correo", "==", snapshot.docs[x].data().restaurante).get().then(rest => {
+                    for (let y = 0; rest.docs[y] != undefined; y++) {
+                        var restauran;
+                        restauran = { id: rest.docs[y].data().correo, nombre: rest.docs[y].data().nombre };
                         lista.push({
-                            nombre: producto.nombre,
-                            descripcion: producto.descripcion,
-                            imagen: producto.imagen,
-                            precio: producto.precio,
-                            restaurante: rest
+                            id: producto.id,
+                            nombre: producto.data().nombre,
+                            descripcion: producto.data().descripcion,
+                            img: producto.data().imagen,
+                            precio: producto.data().precio,
+                            categoria: request.query.categoria,
+                            restaurante: restauran
                         });
-                        if (snapshot.docs[x + 1] == undefined) {
-                            response.send({ productos: lista });
-                        }
-                    }).catch((err) => {
-                        response.send({ error: "Error datos del restaurante" });
-                    });
-                }
+                    }
+                    if (snapshot.docs[x + 1] == undefined) {
+                        response.send({ productos: lista });
+                    }
+                }).catch((err) => {
+                    response.send({ error: "Error datos del restaurante" });
+                });
             }
-        }).catch((err) => {
+        }).catch(err => {
             console.log(err);
-            response.send({ error: "Error en los datos de los productos de la categoria..." });
+            response.send({ error: "Error en los datos de productos de la categoria..." + JSON.stringify(err) });
         });
     }
 });
 //crear un producto
 exports.crearProducto = functions.https.onRequest((request, response) => {
     if (request.method == "POST") {
-        let nombre = request.body.nombre, categoria = request.body.categoria, descripcion = request.body.descripcion, rest = request.body.restaurante, precio = parseInt(request.body.precio), img = request.body.imagen;
+        let nombre = request.body.nombre, categoria = request.body.categoria, descripcion = request.body.descripcion, rest = request.body.restaurante, img = request.body.imagen, precio = request.body.precio;
         //se debe validar que el restaurante exista.  
         if (rest == undefined || nombre == undefined || descripcion == undefined) {
             response.send({ msjError: "Hay un dato que se encuentra indefinido..." });
@@ -182,14 +181,14 @@ exports.crearProducto = functions.https.onRequest((request, response) => {
                 restaurante: rest,
                 precio: precio
             }).then(res => {
-                response.send({ mensaje: "Se ha creado la insercion de producto...", producto: res.id });
+                response.send({ status: true, mensaje: "Se ha creado la insercion de producto...", producto: res.id });
             }).catch(err => {
-                response.send({ msjError: "Error en la inserción..." });
+                response.send({ status: false, msjError: "Error en la inserción..." });
             });
         }
     }
     else {
-        response.send({ msjError: "La peticion tiene que ser un POST" });
+        response.send({ status: false, msjError: "La peticion tiene que ser un POST" });
     }
 });
 //modificar producto
@@ -203,9 +202,9 @@ exports.modificarProducto = functions.https.onRequest((request, response) => {
             restaurante: request.body.restaurante,
             precio: request.body.precio
         }).then(res => {
-            response.send({ msj: "Se ha modificado el producto" });
+            response.send({ status: true, msj: "Se ha modificado el producto" });
         }).catch(err => {
-            response.send({ msj: "Error...en la modificacion de datos" });
+            response.send({ status: false, msj: "Error...en la modificacion de datos" });
         });
     }
 });
@@ -219,66 +218,114 @@ exports.eliminarProducto = functions.https.onRequest((request, response) => {
         response.send({ status: true, data: "La peticion debe ser un POST" });
     }
 });
-//crear el comprador
-exports.crearComprador = functions.https.onRequest((request, response) => {
+//crea usuario
+exports.crearUsuario = functions.https.onRequest((request, response) => {
+    console.log(request.method);
     if (request.method == "POST") {
-        let tarjeta = { codigo: parseInt(request.body.codigo),
-            dueño: request.body.dueno,
-            vencimiento: parseInt(request.body.vencimiento),
+        let tarjeta = {
+            codigo: request.body.codigo,
+            duenno: request.body.duenno,
             numero: request.body.numero,
-            proveedor: request.body.proveedor };
-        var carrito = [];
-        compradores.add({
-            carrito: carrito,
-            nombre: request.body.nombre,
-            ubicacion: genGeopoint(JSON.parse(request.body.ubicacion), true),
-            telefono: request.body.telefono,
-            tarjeta: tarjeta
-        });
-        response.send({ status: true, data: "Se creó el comprador." });
-    }
-    else {
-        response.send({ status: true, data: "La petición debe ser un POST" });
-    }
-});
-//modificar el comprador
-exports.modificarComprador = functions.https.onRequest((request, response) => {
-    if (request.method == "POST") {
-        let tarjeta = { codigo: parseInt(request.body.codigo),
-            dueño: request.body.dueno,
-            vencimiento: parseInt(request.body.vencimiento),
-            numero: request.body.numero,
-            proveedor: request.body.proveedor };
-        compradores.doc(request.body.correo).set({
-            nombre: request.body.nombre,
-            ubicacion: genGeopoint(JSON.parse(request.body.ubicacion), true),
-            telefono: request.body.telefono,
-            tarjeta: tarjeta
-        }, { merge: true });
-        response.send({ mensaje: "Modificacion exitosa del comprador!" });
-    }
-    else {
-        response.send({ status: "La petición tiene que ser un POST" });
-    }
-});
-//obtiene la informacion del comprador
-exports.getInformacionComprador = functions.https.onRequest((request, response) => {
-    if (request.method == "GET") {
-        compradores.doc(request.query.correo).get().then(comp => {
-            var comprador = [];
-            comprador.push({
-                nombre: comp.data().nombre,
-                telefono: comp.data().telefono,
-                ubicacion: comp.data().ubicacion,
-                tarjeta: comp.data().tarjeta
+            proveedor: request.body.proveedor,
+            vencimiento: request.body.vencimiento,
+        };
+        let carrito = [], nombre = request.body.nombre, 
+        //{"codigo":123, "dueño":Jurguen,"numero":12345, "proveedor":BCR,"vencimiento":09/22}
+        telefono = request.body.telefono, correo = request.body.correo, ubicacion = genGeopoint(JSON.parse(request.body.ubicacion), true), contrasenna = request.body.contrasenna;
+        if (tarjeta.codigo == undefined || tarjeta.duenno == undefined
+            || tarjeta.numero == undefined || tarjeta.proveedor == undefined
+            || tarjeta.vencimiento == undefined || correo == undefined
+            || nombre == undefined || contrasenna == undefined
+            || telefono == undefined || ubicacion == undefined) {
+            response.send({ msjError: "Hay un dato que se encuentra indefinido...",
+                correo: correo, nombre: nombre, codigo: tarjeta.codigo,
+                duenno: tarjeta.duenno, numero: tarjeta.numero,
+                proveedor: tarjeta.proveedor, contrasenna: contrasenna,
+                v: tarjeta.vencimiento, ubicacion: ubicacion, telefono: telefono
             });
-            response.send({ comprador: comprador });
-        }).catch(err => {
-            response.send({ msj: "Error al extraer los datos" });
-        });
+        }
+        else {
+            compradores.doc(correo).set({
+                nombre: nombre,
+                carrito: carrito,
+                tarjeta: tarjeta,
+                telefono: telefono,
+                ubicacion: ubicacion,
+                contrasenna: contrasenna
+            }).then(res => {
+                response.send({ mensaje: "Se ha creado la insercion de producto...", producto: res.id });
+            }).catch(err => {
+                response.send({ msjError: "Error en la inserción..." });
+            });
+            response.send({ status: true, data: "Insertado" });
+        }
     }
     else {
-        response.send({ msj: "La petición tiene que ser un GET" });
+        response.send({ status: false, Error: "Metodo es post" });
+    }
+});
+//obtener usuario
+exports.getUsuario = functions.https.onRequest((request, response) => {
+    if (request.method == "GET") {
+        //obtener usuario de firebase por correo.
+        if (request.query.correo == undefined) {
+            response.send({ error: "error datos indefinidos" });
+        }
+        else {
+            compradores.doc(request.query.correo).get().then(usuario => {
+                if (!usuario.exists) {
+                    response.send({ status: false, data: "El usuario no existe" });
+                    return;
+                }
+                var compita = {
+                    correo: request.query.correo,
+                    carrito: usuario.data().carrito,
+                    nombre: usuario.data().nombre,
+                    tarjeta: usuario.data().tarjeta,
+                    telefono: usuario.data().telefono,
+                    ubicacion: usuario.data().ubicacion,
+                    contrasenna: usuario.data().contrasenna
+                };
+                response.send({ status: true, usuarios: compita });
+            });
+        }
+    }
+    else {
+        response.send({ error: "error datos indefinidos" });
+    }
+});
+//obtenerun restaurante
+exports.getUnRestaurante = functions.https.onRequest((request, response) => {
+    if (request.method == "GET") {
+        if (request.query.correo == undefined) {
+            response.send({ status: false, error: "error datos indefinidos" });
+        }
+        else {
+            console.log(request.query.correo);
+            restaurante.where("correo", "==", request.query.correo).get().then(rest => {
+                if (rest.empty) {
+                    response.send({ status: false });
+                }
+                else {
+                    for (let x = 0; rest.docs[x] != undefined; x++) {
+                        var restaurantico = {
+                            id: rest.docs[x].id,
+                            correo: rest.docs[x].data().correo,
+                            descripcion: rest.docs[x].data().descripcion,
+                            horario: rest.docs[x].data().horario,
+                            img: rest.docs[x].data().img,
+                            nombre: rest.docs[x].data().nombre,
+                            telefono: rest.docs[x].data().telefono,
+                            ubicacion: rest.docs[x].data().ubicacion,
+                            contrasenna: rest.docs[x].data().contrasenna
+                        };
+                    }
+                }
+                response.send({ status: true, restaurantes: restaurantico });
+            }).catch(err => {
+                response.send({ status: false, error: "Error al cargar datos" });
+            });
+        }
     }
 });
 //obtiene los restaurantes
@@ -287,7 +334,7 @@ exports.getRestaurantes = functions.https.onRequest((request, response) => {
         restaurante.get().then(snapshot => {
             var listaRestaurantes = [];
             snapshot.forEach(restaurante => {
-                listaRestaurantes.push({ nombre: restaurante.data().nombre, imagen: restaurante.data().img });
+                listaRestaurantes.push(restaurante.data());
             });
             response.send({ restaurantes: listaRestaurantes });
         }).catch(err => {
@@ -298,18 +345,24 @@ exports.getRestaurantes = functions.https.onRequest((request, response) => {
 //crear restaurante
 exports.crearRestaurante = functions.https.onRequest((request, response) => {
     if (request.method == "POST") {
-        let nombre = request.body.nombre, correo = request.body.correo, descripcion = request.body.descripcion, inicio = request.body.inicio, final = request.body.final, ubicacion = genGeopoint(JSON.parse(request.body.ubicacion), true);
-        if (nombre == undefined || correo == undefined || descripcion == undefined
-            || ubicacion == undefined || inicio == undefined || final == undefined) {
+        let horario = {
+            fin: request.body.fin,
+            inicio: request.body.inicio
+        };
+        let nombre = request.body.nombre, descripcion = request.body.descripcion, telefono = request.body.telefono, img = request.body.imagen, correo = request.body.correo, contrasenna = request.body.contrasenna, ubicacion = genGeopoint(JSON.parse(request.body.ubicacion), true);
+        if (nombre == undefined || descripcion == undefined || ubicacion == undefined) {
             response.send({ error: "Hay algún dato indefinido..." });
         }
         else {
             restaurante.add({
                 correo: correo,
                 descripcion: descripcion,
+                horario: horario,
+                img: img,
                 nombre: nombre,
+                telefono: telefono,
                 ubicacion: ubicacion,
-                horario: { inicio: inicio, final: final }
+                contrasenna: contrasenna
             }).then(ref => {
                 response.send({ status: true, data: ref.id });
             }).catch(err => {
@@ -324,17 +377,25 @@ exports.crearRestaurante = functions.https.onRequest((request, response) => {
 //modificar datos
 exports.modificarRestaurante = functions.https.onRequest((request, response) => {
     if (request.method == "POST") {
-        restaurante.doc(request.body.id).set({
-            nombre: request.body.nombre,
-            descripcion: request.body.descripcion,
-            ubicacion: request.body.ubicacion,
+        let horario = {
+            fin: request.body.fin,
             inicio: request.body.inicio,
-            final: request.body.final,
+        };
+        let ubicacion = genGeopoint(JSON.parse(request.body.ubicacion), true);
+        restaurante.doc(request.body.id).set({
+            contrasenna: request.body.contrasenna,
+            correo: request.body.correo,
+            descripcion: request.body.descripcion,
+            img: request.body.img,
+            horario: horario,
+            nombre: request.body.nombre,
+            telefono: request.body.telefono,
+            ubicacion: ubicacion
         }, { merge: true });
-        response.send({ mensaje: "Modificacion exitosa!" });
+        response.send({ status: true, mensaje: "Modificacion exitosa!" });
     }
     else {
-        response.send({ status: "Error en post" });
+        response.send({ status: false, msj: "Error en post" });
     }
 });
 //eliminar resturante.
@@ -349,47 +410,78 @@ exports.eliminarRestaurante = functions.https.onRequest((request, response) => {
     }
 });
 //funcion para agregar un producto al carrito
+function enHorario(pedido, horario) {
+    let dia = pedido.getDay();
+    let min = (pedido.getHours() * 60) + pedido.getMinutes();
+    //console.log(min)
+    //console.log(horario.inicio + " " + horario.fin)
+    let aceptado = false;
+    if (horario.inicio <= min && horario.fin >= min) {
+        aceptado = true;
+    }
+    return aceptado;
+}
 exports.agregarProductoCarrito = functions.https.onRequest((request, response) => {
     if (request.method == "POST") {
         let product = request.body.claveProducto;
         productos.doc(product).get().then(prod => {
+            let nombre = prod.data().nombre, precio = prod.data().precio;
+            console.log(nombre + "Hola");
             if (!prod.exists) {
-                response.send({ msjError: "No existe el producto" });
+                response.send({ status: false, msjError: "No existe el producto" });
             }
             else {
-                //falta validar fecha y horarios del restaurante
                 let cant = parseInt(request.body.cantidad, 10), fecha = new Date(request.body.fecha), ubicacion = genGeopoint(JSON.parse(request.body.ubicacion), true), correo = request.body.claveComprador;
+                console.log(fecha);
                 if (cant == undefined || fecha == undefined || ubicacion == undefined || correo == undefined) {
-                    response.send({ msj: "Error.. Hay un dato indefinido" });
+                    response.send({ status: false, msj: "Error.. Hay un dato indefinido" });
                 }
                 else {
-                    compradores.doc(correo).get().then(comp => {
-                        if (!comp.exists) {
-                            response.send({ msj: "No existe el usuario" });
+                    restaurante.where("correo", "==", prod.data().restaurante).get().then(rest => {
+                        if (rest.empty) {
+                            response.send({ status: false, msj: "No existe el restaurante" });
                         }
                         else {
-                            let carrito = comp.data().carrito;
-                            if (carrito[prod.id] == undefined) {
-                                carrito[prod.id] = {
-                                    cantidad: cant,
-                                    fecha: fecha,
-                                    ubicacion: ubicacion
-                                };
-                                compradores.doc(correo).update({
-                                    carrito: carrito
-                                }).then(() => {
-                                    response.send({ msj: "El producto ha sido agregado en el carrito" });
-                                }).catch(err => {
-                                    response.send({ msj: "Error...el producto no ha sido agregado en el carrito" });
-                                });
-                            }
-                            else {
-                                response.send({ msjError: "El platillo ya se encuentra dentro del carrito" });
-                            }
+                            //if ((enHorario(fecha, rest.docs[0].data().horario)) != true) {
+                            //  console.log("false")
+                            //response.send({ msjError: "No puede ya que el restaurante esta cerrado a esta hora" });
+                            //}
+                            // else {
+                            let restauran = rest.docs[0].data().correo, nombreR = rest.docs[0].data().nombre;
+                            console.log(restauran);
+                            compradores.doc(correo).get().then(comp => {
+                                if (!comp.exists) {
+                                    response.send({ status: false, msj: "No existe el usuario" });
+                                }
+                                else {
+                                    let carrito = comp.data().carrito;
+                                    let producto = {
+                                        idProducto: request.body.claveProducto,
+                                        precio: precio,
+                                        nombre: nombre,
+                                        cantidad: cant,
+                                        fecha: fecha,
+                                        ubicacion: ubicacion,
+                                        restaurante: restauran,
+                                        nombreRestauran: nombreR
+                                    };
+                                    carrito.push(producto);
+                                    compradores.doc(correo).update({
+                                        carrito: carrito
+                                    }).then(() => {
+                                        response.send({ status: true, msj: "El producto ha sido agregado en el carrito" });
+                                    }).catch(err => {
+                                        response.send({ status: false, msj: "Error...el producto no ha sido agregado en el carrito" });
+                                    });
+                                }
+                            }).catch(err => {
+                                console.log(err);
+                                response.send({ status: false, msj: "Error...En los datos del comprador!" });
+                            });
+                            //}
                         }
                     }).catch(err => {
-                        console.log(err);
-                        response.send({ msj: "Error...No se encontro el comprador!" });
+                        response.send({ status: false, msj: "Error.. En los datos del restaurante!" });
                     });
                 }
             }
@@ -401,160 +493,180 @@ exports.agregarProductoCarrito = functions.https.onRequest((request, response) =
         response.send({ msj: "La peticion tiene que ser un POST" });
     }
 });
-//funcion para cuando se hace el pedido
-exports.hacerPedido = functions.https.onRequest((request, response) => {
-    if (request.method == "POST") {
-        let correo = request.body.correo;
-        console.log(correo);
-        if (correo == undefined) {
-            response.send({ msj: "Debe ingresar en el campo de texto del correo" });
-        }
-        else {
-            compradores.doc(correo).get().then(comp => {
-                if (comp.exists) {
-                    let carrito = comp.data().carrito;
-                    let guardar = (correo, carrito) => {
-                        compradores.doc(correo).set({ carrito: carrito }, { merge: true });
-                    };
-                    let keys = Object.keys(carrito);
-                    if (keys.length == 0) {
-                        response.send({ status: false, msj: "No hay pedidos" });
-                    }
-                    else {
-                        for (let c = 0; c < keys.length; c++) {
-                            productos.doc(keys[c]).get().then(producto => {
-                                if (producto.exists) {
-                                    let est = { proceso: "pendiente" };
-                                    pedidos.add({
-                                        correo: correo,
-                                        restaurante: producto.data().restaurante,
-                                        categoria: producto.data().categoria,
-                                        nombre: producto.data().nombre,
-                                        precio: producto.data().precio,
-                                        descripcion: producto.data().descripcion,
-                                        ubicacion: carrito[keys[c]].ubicacion,
-                                        fecha: carrito[keys[c]].fecha,
-                                        cantidad: carrito[keys[c]].cantidad,
-                                        estado: est
-                                    }).then(ref => {
-                                        console.log({
-                                            correo: correo,
-                                            restaurante: producto.data().restaurante,
-                                            categoria: producto.data().categoria,
-                                            nombre: producto.data().nombre,
-                                            precio: producto.data().precio,
-                                            descripcion: producto.data().descripcion,
-                                            ubicacion: carrito[keys[c]].ubicacion,
-                                            fecha: carrito[keys[c]].fecha,
-                                            cantidad: carrito[keys[c]].cantidad,
-                                            estado: est
-                                        });
-                                        delete carrito[keys[c]];
-                                        if (Object.keys(carrito).length == 0) {
-                                            guardar(correo, carrito);
-                                            response.send({ status: true, msj: `Se insertaron ${c} pedidos` });
-                                        }
-                                    }).catch(err => {
-                                        guardar(correo, carrito);
-                                        response.send({ status: false, msj: "Error...al procesar los pedidos" });
-                                    });
-                                }
-                                else {
-                                    guardar(correo, carrito);
-                                    response.send({ error: "No existe el producto..." });
-                                }
-                            }).catch(err => {
-                                guardar(correo, carrito);
-                                console.log(err);
-                                response.send({ error: "Error en los datos del producto" });
-                            });
-                        }
-                    }
-                }
-                else {
-                    response.send({ msj: "No existe el comprador..." });
-                }
-            }).catch(err => {
-                console.log(err);
-                response.send({ error: "Error en los datos del producto..." });
-            });
-        }
-    }
-    else {
-        response.send({ msj: "La petición tiene que ser un POST" });
-    }
-});
-//funcion para eliminar un producto del carrito
-exports.eliminarProductoCarrito = functions.https.onRequest((request, response) => {
-    if (request.method == "POST") {
-        let correo = request.body.correo;
-        let producto = request.body.producto;
-        if (correo == undefined || producto == undefined) {
-            response.send({ msj: "Hay un o más datos indefinidos" });
-        }
-        else {
-            compradores.doc(correo).get().then(comprador => {
-                if (comprador.exists) {
-                    let carrito = comprador.data().carrito;
-                    if (carrito[producto] == undefined) {
-                        response.send({ msj: "El producto en el carrito esta indefinido" });
-                    }
-                    else {
-                        delete (carrito[producto]);
-                        response.send({ msj: `El producto ${producto} en el carrito se eliminó` });
-                        compradores.doc(correo).update({
-                            carrito: carrito
-                        });
-                    }
-                }
-                else {
-                    response.send({ msj: "El correo no existe" });
-                }
-            });
-        }
-    }
-    else {
-        response.send({ msjError: "La peticion tiene que ser un POST" });
-    }
-});
-//funcion para obtener los pedidos de mi restaurante
-exports.getPedidosRestaurante = functions.https.onRequest((request, response) => {
+//funcion para obtener los productos de un restaurante
+exports.getProductosPorRestaurante = functions.https.onRequest((request, response) => {
     if (request.method == "GET") {
-        let claveRest = request.query.claveRest;
-        if (claveRest == undefined) {
-            response.send({ msj: "El dato de correo esta indefinido" });
+        let correo = request.query.correo;
+        if (correo == undefined) {
+            response.send({ status: false, msj: "El dato esta indefinido" });
         }
         else {
-            var listaPedidos = [];
-            pedidos.where("restaurante", "==", claveRest).get().then(pedido => {
-                if (pedido.empty) {
-                    response.send({ msj: "No existe el pedido" });
+            var listaP = [];
+            productos.where("restaurante", "==", correo).get().then(prod => {
+                if (prod.empty) {
+                    response.send({ status: false, msj: "Hay error en los productos" });
                 }
                 else {
-                    var listaPedidos = [];
-                    for (let x = 0; pedido.docs[x] != undefined; x++) {
-                        let ped = pedido.docs[x].data();
-                        listaPedidos.push({
-                            correo: ped.correo,
-                            nombre: ped.nombre,
-                            categoria: ped.categoria,
-                            ubicacion: ped.ubicacion,
-                            cantidad: ped.cantidad,
-                            precio: ped.precio,
-                            fecha: ped.fecha
+                    for (let x = 0; prod.docs[x] != undefined; x++) {
+                        let prods = prod.docs[x].data();
+                        listaP.push({
+                            id: prod.docs[x].id,
+                            nombre: prods.nombre,
+                            descripcion: prods.descripcion,
+                            categoria: prods.categoria,
+                            precio: prods.precio,
+                            imag: prods.imagen
                         });
-                        if (pedido.docs[x + 1] == undefined) {
-                            response.send({ pedidos: listaPedidos });
+                        if (prod.docs[x + 1] == undefined) {
+                            response.send({ status: true, productos: listaP });
                         }
                     }
                 }
-            }).catch(err => {
-                response.send({ mensajeError: "La clave del restaurante no existe" });
+            }).catch((err) => {
+                console.log(err);
+                response.send({ status: false, msj: "Error en los productos al buscar restaurante..." });
             });
         }
     }
     else {
-        response.send({ msj: "La peticion tiene ser GET" });
+        response.send({ status: false, msj: "La petición tiene que ser un GET" });
+    }
+});
+//obtener pedidos restaurante
+exports.getPedidosPorRestaurante = functions.https.onRequest((request, response) => {
+    if (request.method == "GET") {
+        let correo = request.query.correo;
+        if (correo == undefined) {
+            response.send({ status: false, msj: "El dato esta indefinido" });
+        }
+        else {
+            var listaP = [];
+            pedidos.where("restaurante", "==", correo).get().then(prod => {
+                if (prod.empty) {
+                    response.send({ status: false, msj: "Hay error en los productos" });
+                }
+                else {
+                    for (let x = 0; prod.docs[x] != undefined; x++) {
+                        let prods = prod.docs[x].data();
+                        listaP.push({
+                            id: prod.docs[x].id,
+                            cantidad: prods.cantidad,
+                            correo: prods.correo,
+                            estado: prods.estado,
+                            nombre: prods.nombre,
+                            fecha: prods.fecha,
+                            descripcion: prods.descripcion,
+                            categoria: prods.categoria,
+                            precio: prods.precio,
+                            ubicacion: prods.ubicacion
+                        });
+                        if (prod.docs[x + 1] == undefined) {
+                            response.send({ status: true, productos: listaP });
+                        }
+                    }
+                }
+            }).catch((err) => {
+                console.log(err);
+                response.send({ status: false, msj: "Error en los productos al buscar restaurante..." });
+            });
+        }
+    }
+    else {
+        response.send({ status: false, msj: "La petición tiene que ser un GET" });
+    }
+});
+//modificar pedido
+exports.aceptarRechazarEntregarPedido = functions.https.onRequest((request, response) => {
+    if (request.method == "POST") {
+        pedidos.doc(request.body.id).get().then(ped => {
+            let estado = {
+                proceso: request.body.proceso
+            };
+            pedidos.doc(request.body.id).set({
+                cantidad: ped.data().cantidad,
+                categoria: ped.data().categoria,
+                correo: ped.data().correo,
+                descripcion: ped.data().descripcion,
+                estado: estado,
+                fecha: ped.data().fecha,
+                nombre: ped.data().nombre,
+                precio: ped.data().precio,
+                restaurante: ped.data().restaurante,
+                ubicacion: ped.data().ubicacion
+            }, { merge: true });
+            response.send({ status: true, mensaje: "Modificacion exitosa!" });
+        });
+    }
+    else {
+        response.send({ status: false, msj: "Error en post" });
+    }
+});
+exports.crearPedidos = functions.https.onRequest((request, response) => {
+    if (request.method == "POST") {
+        productos.doc(request.body.id).get().then(prod => {
+            let categoria = prod.data().categoria, descripcion = prod.data().descripcion, fecha = new Date(request.body.fecha), estado = {
+                proceso: "Sin asignar"
+            };
+            let ubicacion = genGeopoint(JSON.parse(request.body.ubicacion), true);
+            console.log(request.body.restauranteCorreo);
+            console.log(estado, prod.data().categoria + "Datitos" + ubicacion + prod.data().descripcion);
+            pedidos.doc().set({
+                cantidad: request.body.cantidad,
+                estado: estado,
+                categoria: categoria,
+                correo: request.body.correo,
+                descripcion: descripcion,
+                fecha: fecha,
+                nombre: request.body.nombre,
+                precio: request.body.precio,
+                restaurante: request.body.restauranteCorreo,
+                ubicacion: ubicacion
+            });
+            response.send({ status: true, mensaje: "Se ha creado la insercion de producto..." });
+        }).catch(error => {
+            response.send({ status: false, msj: "Error al obtener productos",
+                cantidad: request.body.cantidad,
+                correo: request.body.correo,
+                fecha: request.body.fecha,
+                nombre: request.body.nombre,
+                precio: request.body.precio,
+                restaurante: request.body.restauranteCorreo,
+            });
+        });
+    }
+});
+exports.modificarCarrito = functions.https.onRequest((request, response) => {
+    if (request.method == "POST") {
+        let carrito = [];
+        compradores.doc(request.body.correo).update({
+            carrito: carrito
+        }).then(() => {
+            response.send({ msj: "El producto ha sido agregado en el carrito" });
+        }).catch(err => {
+            response.send({ msj: "Error...el producto no ha sido agregado en el carrito" });
+        });
+    }
+});
+exports.modificarUsuario = functions.https.onRequest((request, response) => {
+    if (request.method == "POST") {
+        let ubicacion = genGeopoint(JSON.parse(request.body.ubicacion), true);
+        let tarjeta = {
+            codigo: request.body.codigo,
+            duenno: request.body.duenno,
+            numero: request.body.numero,
+            proveedor: request.body.proveedor,
+            vencimiento: request.body.vencimiento,
+        };
+        compradores.doc(request.body.correo).update({
+            tarjeta: tarjeta,
+            nombre: request.body.nombre,
+            telefono: request.body.telefono,
+            ubicacion: ubicacion
+        }).then(() => {
+            response.send({ status: true, msj: "El producto ha sido agregado en el carrito" });
+        }).catch(err => {
+            response.send({ status: false, msj: "Error...el producto no ha sido agregado en el carrito" });
+        });
     }
 });
 //# sourceMappingURL=index.js.map

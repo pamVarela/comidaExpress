@@ -1,0 +1,63 @@
+
+<div *ngIf="visible">
+    <div class="contenedorHome">    
+                <br><br>
+                <button (click)="crearEmpresa()" class="botonHome"  type="button" style="margin-top:140px;" >Crearme una empresa</button>
+                <br><br>
+                <button (click)="crearUsuario()" class="botonHome" type="button"  >Crearme un usuario</button>
+                <br><br>
+    </div>
+</div>
+
+    <div *ngIf="visibleR">
+        <div class="container-fluid">
+            <div class="login-clean" >
+                <form method="post"  >
+                    <h2 class="sr-only" >Login Form</h2>
+                    <div class="illustration" ><i class="icon-user-follow" style="color:#D35400;"></i></div>
+                        <input class="form-control" [(ngModel)]=correoEmpresa type="email" name="email" placeholder="Email" style="margin-top:20px;">
+                        <input class="form-control" [(ngModel)]=nombreEmpresa type="text" name="nombre" placeholder="Nombre" style="margin-top:20px;">
+                        <input class="form-control" [(ngModel)]=descripcionEmpresa type="descripcion" name="descripcion" placeholder="Descripcion" style="margin-top:20px;">
+                        <input class="form-control" [(ngModel)]=contrasennaEmpresa type="password" name="contraseña" placeholder="Password" style="margin-top:20px;">
+                        <input class="form-control" [(ngModel)]=inicio type="text" name="horaInicio" placeholder="Hora inicio" style="margin-top:20px;">
+                        <input class="form-control" [(ngModel)]=fin type="text" name="horaFinal" placeholder="Hora final" style="margin-top:20px;">
+                        <input class="form-control" [(ngModel)]=telefonoEmpresa type="text" name="telefono" placeholder="Teléfono" style="margin-top:20px;">
+                        <input class="form-control" [(ngModel)]=imgEmpresa type="text" name="imagen" placeholder="Imagen" style="margin-top:20px;">
+                        <input class="form-control" [(ngModel)]=ubicacionEmpresa type="text" name="ubicacion" placeholder="Ubicación" style="margin-top:20px;">
+                        <button class="btn btn-primary btn-block" type="submit" (click)="SubirImagen()" style="background-color:rgb(142,145,26);margin-top:15px;">Subir una imagen</button>
+                    <div class="form-group">
+                            <button class="btn btn-primary btn-block" type="submit" (click)="insertarEmpresa()" style="background-color:rgb(142,145,26);margin-top:15px;">Registrarse</button>
+                            <button class="btn btn-primary btn-block" type="submit" (click)="regresar()" style="background-color:rgb(142,145,26);margin-top:15px;">Regresar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div *ngIf="visibleC">
+
+        <div class="container-fluid">
+
+        <div class="login-clean" >
+            <form method="post" >
+                <h2 class="sr-only" >Login Form</h2>
+                <div class="illustration"><i class="icon-user-follow" style="color:#D35400;"></i></div>
+                    <input class="form-control" [(ngModel)]="email" type="email" name="email" placeholder="Email" style="margin-top:20px;">
+                    <input class="form-control" [(ngModel)]="nombre" type="text" name="nombre" placeholder="Nombre" style="margin-top:20px;">
+                    <input class="form-control" [(ngModel)]="password" type="password" name="contraseña" placeholder="Password" style="margin-top:20px;">
+                    <input class="form-control" [(ngModel)]="numeroTarjeta" type="number" name="numTarjeta" placeholder="Número de tarjeta" style="margin-top:20px;">
+                    <input class="form-control" [(ngModel)]="codigo" type="number" name="codigoTarjeta" placeholder="Código de tarjeta" style="margin-top:20px;">
+                    <input class="form-control" [(ngModel)]="proveedor" type="text" name="proveedor" placeholder="Proveedor bancario" style="margin-top:20px;">
+                    <input class="form-control" [(ngModel)]="vencimiento" type="text" name="vencimiento" placeholder="Vencimiento" style="margin-top:20px;">          
+                    <input class="form-control" [(ngModel)]="telefono" type="number" name="telefono" placeholder="Teléfono" style="margin-top:20px;">
+                    <input class="form-control" [(ngModel)]="ubicacion" type="text" name="ubicacion" placeholder="Ubicación" style="margin-top:20px;">
+                    <button class="btn btn-primary btn-block" type="submit" (click)="AgregarUbicacion()"  style="background-color:rgb(142,145,26);margin-top:15px;">Agregar ubicacion</button>
+                <div class="form-group">
+                    <button class="btn btn-primary btn-block" (click)="insertarUsuario()" type="submit" style="background-color:rgb(142,145,26);margin-top:15px;">Registrarse</button>
+                    <button class="btn btn-primary btn-block" type="submit" (click)="regresar()" style="background-color:rgb(142,145,26);margin-top:15px;">Regresar</button>
+                        
+                </div>
+            </form>
+        </div>
+    </div>
+    </div>

@@ -1,5 +1,7 @@
 # See http://help.github.com/ignore-files/ for more about ignoring files.
 
+node_modules/
+
 # compiled output
 /dist
 /dist-server
@@ -8,6 +10,7 @@
 
 # dependencies
 /node_modules
+
 
 # IDEs and editors
 /.idea

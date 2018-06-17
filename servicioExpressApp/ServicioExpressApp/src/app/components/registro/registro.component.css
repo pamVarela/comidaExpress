@@ -1,0 +1,44 @@
+.btn{
+
+    width:100%;
+    height:80px;
+    border-color:#fd7e14;
+}
+
+.botonHome{
+
+    width:450px;
+    height:60px;
+    background-color:#D35400; 
+    border-color:#fd7e14;
+    align-content: center;
+    margin-left:32%; 
+    border-radius: 10px;
+}
+
+.imagen{
+    width: "200px";
+    height: "50px"
+}
+
+
+.contenedorHome{
+
+    align-content: center;
+}
+.navbar{
+    background-color:#D35400;
+}
+
+
+@media screen and (max-width:640px){
+    .botonHome{
+        width: 250px;
+        margin-left: 23%; 
+    }
+    .contenedorProducto{
+        width: 350px;
+        margin-left: 8%; 
+    }
+    
+}

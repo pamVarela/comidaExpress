@@ -1,0 +1,26 @@
+
+<div class="login-clean" style="background-color:rgb(201,92,20) ;">
+    <form method="post">
+        <h2 class="sr-only">Login Form</h2>
+        <div class="illustration"><i class="icon ion-android-cart" style="color:rgb(142,145,26);"></i>
+        </div>
+        <button class="btn btn-primary btn-block" (click)="LogIn()" type="submit" style="background-color:rgb(173,63,56);">
+                <i class="typcn typcn-social-google-plus" style="font-size:20px;"></i>
+                &nbsp; Iniciar sesión con Google
+        </button>
+        <div class="form-group">
+                <input [(ngModel)]="email" class="form-control" type="email"name="email" placeholder="Email" style="margin-top:20px;">
+        </div>
+        <div class="form-group">
+            <input [(ngModel)]="password" class="form-control" type="password" name="password" placeholder="Password">
+        </div>
+            <button class="btn btn-primary btn-block" type="submit" (click)="LogInGeneralUsuario()" style="background-color:rgb(142,145,26);margin-top:26px;">Ingresar como usuario</button>    
+            <button class="btn btn-primary btn-block" type="submit" (click)="LogInGeneralRestaurante()" style="background-color:rgb(142,145,26);margin-top:26px;">Ingresar como empresa</button>    
+        <!--[(ngModel)]="checkR"    [(ngModel)]="checkC"-->
+           <div class="form-group">      
+            <button class="btn btn-primary btn-block" type="submit" (click)="Registrarse()" style="background-color:rgb(142,145,26);margin-top:15px;">Registrarse</button>
+            <button class="btn btn-primary btn-block" type="submit" (click)="EntrarLibre()" style="background-color:rgb(142,145,26);margin-top:15px;">Ingresar anónimo</button>
+            
+        </div>
+    </form>
+</div>

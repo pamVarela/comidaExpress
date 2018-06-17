@@ -17,11 +17,19 @@
       "**/node_modules/**"
     ],
     "rewrites": [
-      //restaurantes
+     //restaurantes
       {"source": "/ModificarRestaurante","function": "modificarRestaurante"},
       {"source": "/CrearRestaurantes","function": "crearRestaurante"},
       {"source": "/GetRestaurantes","function": "getRestaurantes"},
       {"source": "/EliminarRestaurante","function": "eliminarRestaurante"},
+      {"source": "/getUnRestaurante","function": "getUnRestaurante"},
+      {"source": "/getProductosPorRestaurante","function": "getProductosPorRestaurante"},
+      //pedidos
+      {"source": "/getPedidosPorRestaurante","function": "getPedidosPorRestaurante"},
+      {"source": "/aceptarRechazarEntregarPedido","function": "aceptarRechazarEntregarPedido"},
+      {"source": "/crearPedidos","function": "crearPedidos"},
+      {"source": "/modificarCarrito","function": "modificarCarrito"},
+      
       //productos
       {"source": "/crearProducto","function": "crearProducto"},
       {"source": "/eliminarProducto","function": "eliminarProducto"},
@@ -31,6 +39,13 @@
       {"source": "/crearCategoria","function": "crearCategoria"},
       {"source": "/getListaProductosCategoria","function": "getListaProductosCategoria"},
       //compradores
+      {"source": "/crearUsuario","function": "crearUsuario"},
+      {"source": "/getUsuario","function": "getUsuario"},
+      {"source": "/modificarUsuario","function": "modificarUsuario"},
+      //agregar a carrito
+      {"source": "/agregarProductoCarrito","function": "agregarProductoCarrito"},
+      
+
       {"source": "**","destination": "/index.html"}
 
       

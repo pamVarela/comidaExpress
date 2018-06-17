@@ -1,0 +1,204 @@
+<router-outlet></router-outlet>
+<nav class="navbar navbar-light navbar-expand-md" >
+        <div class="container-fluid"><a class="navbar-brand" >Comida Express</a><button class="navbar-toggler" data-toggle="collapse" data-target="#navcol-1"><span class="sr-only">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>
+            <div class="collapse navbar-collapse"
+                id="navcol-1">
+                <ul class="nav navbar-nav">
+                    <li class="nav-item" role="presentation"><a class="nav-link active" (click)="Home()"><i class="fa fa-home"></i>&nbsp; Home</a></li>
+                    <li class="nav-item" role="presentation"><a class="nav-link active" (click)="MostrarPerfil()"><i class="fa fa-user"></i>&nbsp; Perfil</a></li>
+                    <li class="nav-item" role="presentation"><a class="nav-link active" (click)="MostrarMiCarrito()"><i class="fa fa-shopping-cart"></i>&nbsp; Carrito de compra</a></li>     
+                    <li class="nav-item" role="presentation"><a class="nav-link active" href="#"><i class="fa fa-shopping-cart"></i>&nbsp; Salir</a></li>     
+                  </ul>
+            </div>
+        </div>
+      </nav>
+      
+      
+      <div *ngIf="visibleMC">
+        <div class="container">
+            <table class="table table-bordered">
+                <div *ngFor="let producto of listaCarrito;let i=index">
+                    <tr>
+                        <h3 style="color: #0056b2">Pedido {{i+1}}</h3>
+                        <div style="background:  #C7D132  " class="container-fluid">         
+                            <br>
+                            <div  class="row">
+                                <div  >
+                                <input [(ngModel)]="producto.cantidad" type="number" style="width: 50px;" id="cantP" name="cantProducto" value= '{{producto.cantidad}}'>
+                                </div>
+                                <div class="col-sm-3 " style="width: 150px; height: 100px;" >Nombre: {{producto.nombre}} </div>
+                                <div class="col-sm-3 " style="width: 150px;">Precio total:{{producto.cantidad * producto.precio}}</div>
+                                <div class="col-sm-3 " style="width: 150px; height: 100px;" >Nombre encargados: {{producto.nombreRestauran}} </div>
+                                <div class="col-sm-3 " style="width: 150px; height: 100px;" >Email encargados: {{producto.restaurante}} </div>
+                                <div class="col-sm-3 " style="width: 150px; height: 100px;" >ubicacion: [ {{producto.ubicacion._latitude}}, {{producto.ubicacion._longitude}} ] </div>
+                                <div class="col-sm-3" style="width: 30px;"><button (click)="eliminarProducto(i)" class="botonHome" type="button" style="width: 30px; height: 30px;" ><i class="fa fa-trash"></i></button></div>
+                                <hr style="color: #0056b2;">    
+                            </div>
+                        </div>  
+                    </tr>
+                </div>
+                <button type="button" class="btn btn-primary botonEditarPerfil" style="margin-left: 8px;"data-toggle="modal" data-target="#myModal">Hacer pedido</button>            
+            </table>
+    
+          <div class="container">
+                  
+                  <div class="modal fade" id="myModal">
+                    <div class="modal-dialog">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h4 class="modal-title">Pago</h4>
+                          <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        </div>
+                        
+                      <div class="modal-body">
+                              <h6 style="margin-left: 15px;"> Ingrese el número de tarjeta: </h6>
+                              <input [(ngModel)]="tarjetaU" type="number" class="cajaEditor" id="usr" name="tarjetaUsuario" value=0000000 > 
+                              <br>
+                      </div>
+                        <!-- Modal footer -->
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-danger" (click)="crearPedido()" style="background-color:rgb(142,145,26);  " data-dismiss="modal">Hacer pedido</button>
+                        </div>
+                        
+                      </div>
+                    </div>
+                  </div>
+                  
+                </div>
+                
+      </div> 
+    </div>
+      <div *ngIf="visibleH">
+        <div class="contenedorHome">
+            <br><br>
+            <button (click)="MostrarCategorias()" class="botonHome"  type="button" style="margin-top:140px;" >Categorías</button>
+            <br><br>
+            <button (click)="MostrarRestaurante()" class="botonHome" type="button"  >Restaurantes</button>
+        </div>
+      </div>
+      
+      <div *ngIf="visibleC">
+        <div *ngFor="let categoria of categorias; let i=index">
+              <button (click)="MostrarCategoriaElegida(i)" class="botonHome" style="margin-top:20px;">{{categoria}}</button>
+        </div>    
+      </div>
+      
+      
+      <div *ngIf="visibleP">
+          <div class="contenedorPerfil">
+              <br>
+              <h6 style="margin-left: 15px;"> Nombre: {{usuario.nombre}}</h6>
+              <br>
+              <h6 style="margin-left: 15px;"> Tarjeta: {{usuario.tarjeta.numero}}</h6>
+              <br>
+              <h6 style="margin-left: 15px;"> Teléfono: {{usuario.telefono}}</h6>
+              <br>
+              <h6 style="margin-left: 15px;"> Ubicación: [{{usuario.ubicacion._latitude}},{{usuario.ubicacion._longitude}}]</h6>
+              <button type="button" class="btn btn-primary botonEditarPerfil" data-toggle="modal" data-target="#myModal">Editar</button>
+              
+              <div class="container">
+                  <div class="modal fade" id="myModal"style="margin-right: 7%;">
+                      <div class="modal-dialog">
+                          <div class="modal-content">
+                              <div class="modal-header">
+                                  <h4 class="modal-title">Editar información</h4>
+                                  <button type="button" class="close" data-dismiss="modal">&times;</button>
+                              </div>
+                              <div class="modal-body">
+                                  <h6  style="margin-left: 15px;"> Nombre: </h6>
+                                  <input [(ngModel)]="usuario.nombre" type="text" class="cajaEditor" id="usr" name="nombreUsuario" value="{{usuario.nombre}}" > 
+                                  <br>
+                                  <h6 style="margin-left: 15px;"> Tarjeta: dueño</h6>
+                                  <input [(ngModel)]="usuario.tarjeta.duenno"type="text" class="cajaEditor" id="usr" name="tarjetaUsuario" value={{usuario.tarjeta.duenno}} > 
+                                  <br>
+                                  <h6 style="margin-left: 15px;"> Numero Tarjeta: </h6>
+                                  <input [(ngModel)]="usuario.tarjeta.numero"type="number" class="cajaEditor" id="usr" name="tarjetaUsuario" value={{usuario.tarjeta.numero}} > 
+                                  <h6 style="margin-left: 15px;"> Codigo Tarjeta: </h6>
+                                  <input [(ngModel)]="usuario.tarjeta.codigo"type="number" class="cajaEditor" id="usr" name="tarjetaUsuario" value={{usuario.tarjeta.codigo}} > 
+                                  <h6 style="margin-left: 15px;"> Proveedor Tarjeta: </h6>
+                                  <input [(ngModel)]="usuario.tarjeta.proveedor"type="text" class="cajaEditor" id="usr" name="tarjetaUsuario" value={{usuario.tarjeta.proveedor}} > 
+                                  <h6 style="margin-left: 15px;"> Vencimiento Tarjeta: </h6>
+                                  <input [(ngModel)]="usuario.tarjeta.vencimiento"type="text" class="cajaEditor" id="usr" name="tarjetaUsuario" value={{usuario.tarjeta.vencimiento}} > 
+                                  <h6 style="margin-left: 15px;"> Teléfono: </h6>
+                                  <input [(ngModel)]="usuario.telefono" type="text" class="cajaEditor" id="usr" name="telefonoUsuario" value={{usuario.telefono}} > 
+                                  <br>
+                                  <h6 style="margin-left: 15px;"> Ubicación: </h6>
+                                  <input [(ngModel)]="ubicacion" type="text" class="cajaEditor" id="usr" name="ubicacionUsuario" value="ubicacion" >             
+                                  
+                                  
+                                </div>
+                              <div class="modal-footer">
+                                  <button (click)=EditarPerfil() type="button" class="btn btn-danger"  data-dismiss="modal">Editar</button>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>
+            
+      
+      
+      <div *ngIf="visibleR">
+        <p> <input type="text" class="form-control" id="usr" value="Restaurante"></p>
+        <div *ngFor="let restaurante of listaRestaurante">
+            <div class="article-list">
+                <div class="row articles">
+                    <div style=" margin-left: 12%;margin-top:20px;"><a (click)="MostrarRestauranteElegido(i)">
+                      
+                      
+                      <img class="img-fluid" src="{{restaurante.img}}" width="280px" height= "200px"></a>      
+                      <h6 class="name"><br>Nombre: {{restaurante.nombre}}</h6>
+
+                      <button (click)="ProductosPorRestaurante(restaurante)" class="botonAgregar">Ver</button>
+                        
+                    </div>        
+                </div>
+            </div>    
+        </div>    
+      </div>
+      
+      
+      
+      <div *ngIf="visibleCE">
+          <div *ngFor="let producto of listaProductos">   
+              <div class="article-list">
+                  <div class="row articles">
+                      <div style="margin-left: 10%; margin-top:20px;">
+                          <div style="margin-left: 10%; margin-top:20px;"></div>
+                          <img src="{{producto.img}}" width="300px" height= "200px">    
+                          <br>
+                          <br>
+                          <h6 ><a href="http.google">Restaurante: {{producto.restaurante.nombre}}</a></h6>
+                          <h6 >Nombre: {{producto.nombre}}</h6>
+                          <h6 >Categoria: {{producto.categoria}}</h6>
+                          <h6 >Descripcion: {{producto.descripcion}}</h6>
+                          <h6 >Precio: {{producto.precio}}</h6>
+                          <input [(ngModel)]="cant" type="number" class="cajaEditor" id="cant" name="cantidad"> 
+                          <button (click)="AgregarCarrito(producto)" class="botonAgregar">Agregar</button>
+                      </div>        
+                  </div>
+              </div>
+          </div>
+      </div>
+
+      <div *ngIf="visiblePR">
+        <div *ngFor="let producto of listaProductos">   
+            <div class="article-list">
+                <div class="row articles">
+                    <div style="margin-left: 10%; margin-top:20px;">
+                        <div style="margin-left: 10%; margin-top:20px;"></div>
+                        <img src="{{producto.imag}}" width="300px" height= "200px">    
+                        <br>
+                        <br>
+                        <h6 >Nombre: {{producto.nombre}}</h6>
+                        <h6 >Categoria: {{producto.categoria}}</h6>
+                        <h6 >Descripcion: {{producto.descripcion}}</h6>
+                        <h6 >Precio: {{producto.precio}}</h6>
+                        <input [(ngModel)]="cant" type="number" class="cajaEditor" id="cant" name="cantidad"> 
+                        <button (click)="AgregarCarrito(producto)" class="botonAgregar">Agregar</button>
+                    </div>        
+                </div>
+            </div>
+        </div>
+    </div>
