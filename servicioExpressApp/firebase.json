@@ -44,6 +44,7 @@
       {"source": "/modificarUsuario","function": "modificarUsuario"},
       //agregar a carrito
       {"source": "/agregarProductoCarrito","function": "agregarProductoCarrito"},
+      {"source": "/eliminarDelCarrito","function": "eliminarDelCarrito"},
       
 
       {"source": "**","destination": "/index.html"}

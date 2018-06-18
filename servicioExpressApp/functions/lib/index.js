@@ -669,4 +669,15 @@ exports.modificarUsuario = functions.https.onRequest((request, response) => {
         });
     }
 });
+exports.eliminarDelCarrito = functions.https.onRequest((request, response) => {
+    if (request.method == "POST") {
+        compradores.doc(request.body.correo).update({
+            carrito: request.body.carrito
+        }).then(() => {
+            response.send({ status: true, msj: "El producto ha sido eliminado" });
+        }).catch(err => {
+            response.send({ status: false, msj: "Error, no se pudo eliminar" });
+        });
+    }
+});
 //# sourceMappingURL=index.js.map

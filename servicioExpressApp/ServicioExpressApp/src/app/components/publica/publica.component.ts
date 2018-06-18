@@ -83,19 +83,26 @@ export class PublicaComponent implements OnInit{
     this.visibleEP=false;
     this.visibleMC= true;
     this.visiblePR=false;
-
-    
-        
-      
-
-    
   }
+
   i:number
   cant:number
   fecha:"June 16, 2018, 14:00:00 UTC-6"
   usuario = JSON.parse(sessionStorage.getItem("Usuario"));
   tarjetaU:number
 
+  sacarDeCarrito(indice:number){
+    this.listaCarrito.splice(indice,1)
+    console.log(this.listaCarrito)
+    this.service.sacarDeCarrito(this.usuario.correo,this.listaCarrito).subscribe(res=>{
+      console.log(res)
+      let respuesta= JSON.parse(JSON.stringify(res))
+      if(!respuesta.status){
+        alert("Ocurrio un error")
+      }
+    })
+  }
+  
   crearPedido(){
     
     if(this.tarjetaU==this.usuario.tarjeta.numero){

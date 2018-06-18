@@ -182,5 +182,11 @@ export class MyService{
             ubicacion:ubicacion
         })
     }
+    public sacarDeCarrito(correo:string,carrito:Productos[]){
+        return this.service.post(this.url+"eliminarDelCarrito",{
+            correo:correo,
+            carrito:carrito
+        })
+    }
 }
 
